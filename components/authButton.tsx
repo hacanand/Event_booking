@@ -8,13 +8,18 @@ const AuthButton: React.FC = () => {
     return (
       <div>
         <p>Welcome, {session.user?.name}</p>
-        <button onClick={() => signOut()}>Sign Out</button>
+        <button
+          className="p-2 border-2 m-2 border-green-400 "
+          onClick={() => signOut()}
+        >
+          Sign Out
+        </button>
       </div>
     );
   }
 
   return (
-    <button onClick={() => signIn("linkedin")}>Sign In with LinkedIn</button>
+    <button className="p-2 border-2 border-green-400  m-2" onClick={() => signIn("linkedin")}>Sign In with LinkedIn</button>
   );
 };
 
