@@ -1,20 +1,16 @@
-import { NextResponse } from "next/server";
-import { getToken } from "next-auth/jwt";
+ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-import { NextRequest } from "next/server";
+ const isProtectedRoute = createRouteMatcher(["/"]);
 
-export async function middleware(req: NextRequest) {
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+ export default clerkMiddleware(async (auth, req) => {
+   if (!isProtectedRoute(req)) await auth.protect();
+ });
 
-  const isAuthPage = req.url.includes("/api/auth/signin");
-
-  if (!token && !isAuthPage) {
-    return NextResponse.redirect(new URL("/api/auth/signin", req.url));
-  }
-
-  return NextResponse.next();
-}
-
-export const config = {
-  matcher: ["/protected/:path*"], // Apply to protected routes
-};
+ export const config = {
+   matcher: [
+     // Skip Next.js internals and all static files, unless found in search params
+     "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+     // Always run for API routes
+     "/(api|trpc)(.*)",
+   ],
+ };
