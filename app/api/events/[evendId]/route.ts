@@ -1,14 +1,13 @@
- 
 import { NextApiRequest, NextApiResponse } from "next";
 
 import dbConnect from "@/app/utils/dbConnect";
-import Event from "../../../models/eventModel";
+import Event from "@/models/eventModel";
 
 // export default async function GET(
 //   req: NextApiRequest,
 //   res: NextApiResponse
 // ) {
-  
+
 //   try {
 //     const { eventId } = req.query;
 // // console.log(eventId)
@@ -41,7 +40,6 @@ import Event from "../../../models/eventModel";
 //     });
 //   }
 // }
-
 
 export default async function handler(
   req: NextApiRequest,

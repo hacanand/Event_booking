@@ -1,11 +1,14 @@
  
+// src/app/page.tsx
+import React from 'react';
+import LoginButton from '@/components/LoginButton';
+
 export default function Home() {
   return (
-     
-    <div className="flex flex-col p-10 justify-center items-center">
-      <h1>Home</h1>
-      {/* <Button>Click me</Button> */}
-    </div>
+    <main>
+      <h1>Calendly OAuth with App Router</h1>
+      <LoginButton />
+    </main>
   );
 }
 

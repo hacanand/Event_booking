@@ -2,16 +2,24 @@ import mongoose, { Document, Schema, Model } from 'mongoose';
 
 interface IUser extends Document {
   id: string;
-  type: 'user';
-  userType: 'salesperson' | 'customer';
+  type: "user";
+  userType: "salesperson" | "customer";
   clerkId: string;
   email: string;
   fullName: string;
   profilePicture?: string;
-  calendlyAccessToken?: string;
-  calendlyRefreshToken?: string;
+  calendly_token?: {
+    access_token: string;
+    refresh_token: string;
+    scope: string;
+    token_type: string;
+    owner: string;
+    organization: string;
+  };
+  // calendlyAccessToken?: string;
+  // calendlyRefreshToken?: string;
   calendlyUserId?: string;
-  token?: {
+  google_calendar_token?: {
     access_token: string;
     refresh_token: string;
     scope: string;
@@ -31,13 +39,13 @@ const userSchema: Schema<IUser> = new Schema(
     },
     type: {
       type: String,
-      enum: ['user'],
+      enum: ["user"],
       required: true,
-      default: 'user',
+      default: "user",
     },
     userType: {
       type: String,
-      enum: ['salesperson', 'customer'],
+      enum: ["salesperson", "customer"],
       required: true,
     },
     clerkId: {
@@ -48,7 +56,7 @@ const userSchema: Schema<IUser> = new Schema(
       type: String,
       required: true,
       unique: true,
-      match: [/^\S+@\S+\.\S+$/, 'Please provide a valid email address'],
+      match: [/^\S+@\S+\.\S+$/, "Please provide a valid email address"],
     },
     fullName: {
       type: String,
@@ -59,25 +67,21 @@ const userSchema: Schema<IUser> = new Schema(
       type: String,
       default: null,
     },
-    calendlyAccessToken: {
-      type: String,
-      required: function (this: IUser) {
-        return this.userType === 'salesperson';
-      },
-    },
-    calendlyRefreshToken: {
-      type: String,
-      required: function (this: IUser) {
-        return this.userType === 'salesperson';
-      },
+    calendly_token: {
+      access_token: { type: String, required: true },
+      refresh_token: { type: String, required: true },
+      scope: { type: String, required: true },
+      token_type: { type: String, required: true },
+      owner: { type: String, required: true },
+      organization: { type: String, required: true },
     },
     calendlyUserId: {
       type: String,
       required: function (this: IUser) {
-        return this.userType === 'salesperson';
+        return this.userType === "salesperson";
       },
     },
-    token: {
+    google_calendar_token: {
       access_token: { type: String, required: false },
       refresh_token: { type: String, required: false },
       scope: { type: String, required: false },
