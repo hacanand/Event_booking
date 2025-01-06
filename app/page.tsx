@@ -5,7 +5,7 @@ import LoginButton from "@/components/LoginButton";
 import { useClerk, UserButton } from "@clerk/nextjs";
 import { useUser } from "@clerk/nextjs";
 import axios from "axios";
- 
+
 export default function Home() {
   const { user } = useUser();
   const { redirectToSignIn } = useClerk();
@@ -14,17 +14,15 @@ export default function Home() {
   >(null);
   const handleRoleSelection = async (role: "salesman" | "customer") => {
     setSelectedRole(role);
-    await axios.post("/api/clerk/role-assign", {
+     await axios.post("/api/clerk/role-assign", {
       userId: user?.id,
       role,
-    }
-    )
-    // Pass role as metadata during the sign-in process
+    });
     redirectToSignIn({
       redirectUrl: `/?role=${role}`,
     });
   };
-console.log(user);
+  
   return (
     <main>
       <h1>Calendly OAuth with App Router</h1>
@@ -34,10 +32,15 @@ console.log(user);
       {!user ? (
         <div>
           <h1>Select Your Role</h1>
-          <button onClick={() => handleRoleSelection("salesman")}>
+          <button onClick={() => 
+            handleRoleSelection("salesman") 
+          }>
             Login as Salesman
           </button>
-          <button onClick={() => handleRoleSelection("customer")}>
+          <button onClick={() => 
+            handleRoleSelection("customer") 
+            
+          }>
             Login as Customer
           </button>
 
@@ -51,8 +54,8 @@ console.log(user);
       ) : (
         <>
           <UserButton />
-            <div>
-              {/* console.log(user); */}
+          <div>
+            {/* console.log(user); */}
             <h1>User Profile</h1>
             <p>
               <strong>ID:</strong> {user.id}
@@ -71,9 +74,9 @@ console.log(user);
               {user.primaryPhoneNumber?.phoneNumber || "Not Provided"}
             </p>
 
-              <h2>Public Metadata</h2>
-              <h2></h2> 
-            <pre>{JSON.stringify(user.publicMetadata)}</pre> 
+            <h2>Public Metadata</h2>
+            <h2></h2>
+            <pre>{JSON.stringify(user.publicMetadata)}</pre>
             <h2>External Accounts</h2>
             {/* <pre>{JSON.stringify(user.externalAccounts, null, 2)}</pre> */}
           </div>
