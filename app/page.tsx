@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 "use client";
 // src/app/page.tsx
 import React, { useState } from "react";
@@ -100,3 +101,12 @@ export default function Home() {
 
 //   return <h1>This is a protected page</h1>;
 // }
+=======
+import { redirect } from "next/navigation";
+import CustomerDashboardPage from "./customer-dashboard/page";
+
+export default function Home() {
+  // redirect("/customer-dashboard");
+  return <CustomerDashboardPage />;
+}
+>>>>>>> origin/dev
