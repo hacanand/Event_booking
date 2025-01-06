@@ -13,26 +13,25 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-<<<<<<< HEAD
-        <body
+        {/* <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
+        > */}
           {/* <SignedOut>
             <SignInButton />
           </SignedOut>
           <SignedIn>
             <UserButton />
           </SignedIn> */}
-          {children}
-=======
-        <body className={inter.className}>
-          <div className="flex flex-col min-h-screen">
-            <Navbar />
-            <main className="flex-grow">{children}</main>
-          </div>
->>>>>>> origin/dev
-        </body>
+          {/* {children} */}
+          <body className={inter.className}>
+            <div className="flex flex-col min-h-screen">
+              <Navbar />
+              <main className="flex-grow">{children}</main>
+            </div>
+          </body>
       </html>
     </ClerkProvider>
   );
+
 }
+
