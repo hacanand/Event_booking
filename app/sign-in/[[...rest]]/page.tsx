@@ -52,23 +52,17 @@ export default function LoginForm() {
         </div>
       </RadioGroup>
       <div>
-        {/* <SignIn
+        <SignIn
           appearance={{
             layout: {
-              socialButtons: {
-                align: "center",
-              },
-            },
+            
+            }
           }}
           path="/login"
           routing="path"
-          redirectUrl={handleOAuthCallback("/login/callback")}
+          redirectUrl={handleOAuthCallback("/")}
           signUpUrl="/sign-up"
-          externalOptions={{
-            enabledProviders: ["linkedin"],
-            signInUrl: "https://connect.clerk.dev/oauth/linkedin/start",
-          }}
-        /> */}
+        />
       </div>
     </motion.div>
   );
