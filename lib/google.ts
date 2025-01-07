@@ -6,13 +6,13 @@ const SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"];
 
 export function getGoogleAuthClient() {
   return new google.auth.OAuth2(
-    process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-    process.env.GOOGLE_CLIENT_SECRET,
-    process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI
+    process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
+    process.env.GOOGLE_CLIENT_SECRET!,
+    process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI!
   );
 }
 
-export function getAuthUrl() {
+export function getGoogleAuthUrl() {
   const oauth2Client = getGoogleAuthClient();
   return oauth2Client.generateAuthUrl({
     access_type: "offline",

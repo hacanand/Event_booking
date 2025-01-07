@@ -5,6 +5,7 @@ interface IUser extends Document {
   type: "user";
   userType: "salesperson" | "customer";
   clerkId: string;
+  schedulesEventUrl?: string;
   email: string;
   fullName: string;
   profilePicture?: string;
@@ -51,6 +52,10 @@ const userSchema: Schema<IUser> = new Schema(
     clerkId: {
       type: String,
       required: true,
+    },
+    schedulesEventUrl: {
+      type: String,
+      default: null,
     },
     email: {
       type: String,

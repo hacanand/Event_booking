@@ -1,28 +1,57 @@
+
 import { getGoogleAuthClient } from "@/lib/google";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+// import { setCookies } from "./setCookies";?
+import axios from "axios";
+import { access } from "fs";
 
 export default async function CallbackPage({
   searchParams,
 }: {
   searchParams: { code: string };
 }) {
-  const code = searchParams.code;
+  const code = await searchParams.code;
 
   if (!code) {
     return <p>Authorization code not found.</p>;
   }
+// console.log(code)
+  const client = await getGoogleAuthClient();
+  // let tokens;
+  try {
+    const response = await client.getToken(code);
+    const tokens = response?.tokens;
+    console.log(tokens);
 
-  const client = getGoogleAuthClient();
-  const { tokens } = await client.getToken(code);
+    const options = {
+      method: "POST",
+      url:  `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/google-calendar/set-cookies`,
+      headers: {
+        Accept: "*/*",
+        "Content-Type": "application/json",
+      },
+      data: {
+        access_token:tokens.access_token,
+        refresh_token:tokens.refresh_token
+     
+      },
+    };
 
-  const cookieStore = await cookies();
-  cookieStore.set("google-access-token", tokens.access_token || "", {
-    httpOnly: true,
-  });
-  cookieStore.set("google-refresh-token", tokens.refresh_token || "", {
-    httpOnly: true,
-  });
+    try {
+      const { data } = await axios.request(options);
+      console.log(data);
+      redirect("/?google-auth=success");
+    } catch (error) {
+      console.error(error);
+      return <p>Failed to set cookies. Please try again.</p>;
+    }
+  
+  } catch (error) {
+    console.error("Error fetching tokens:", error);
+    return <p>Failed to fetch tokens. Please try again.</p>;
+  }
 
-  redirect("/dashboard");
+  
+   
+  // redirect("/");
 }

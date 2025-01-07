@@ -102,8 +102,24 @@
 // }
 import { redirect } from "next/navigation";
 import CustomerDashboardPage from "./customer-dashboard/page";
+import { getCalendlyAuthUrl } from "@/lib/calendly";
+import { getGoogleAuthUrl } from "@/lib/google";
+import Link from "next/link";
 
 export default function Home() {
   // redirect("/customer-dashboard");
-  return <CustomerDashboardPage />;
+  // return <CustomerDashboardPage />;
+  const authUrl = getCalendlyAuthUrl();
+  const googleAuthUrl = getGoogleAuthUrl();
+
+  return (
+    <div>
+      <h1>Sign in to Calendly</h1>
+      <Link href={authUrl}>Sign in with Calendly</Link>
+      <br />
+      <h1>Google Calendar Login</h1>
+      {/* //open link in new windowt on onClick */}
+     <Link   href={googleAuthUrl}>Sign in with Google</Link>
+    </div>
+  );
 }

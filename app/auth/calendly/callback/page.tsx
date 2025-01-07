@@ -1,40 +1,50 @@
-// src/app/auth/callback/page.tsx
-"use client";
 
-import React, { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { exchangeCodeForToken } from "@/lib/calendly";
 import axios from "axios";
+import { redirect } from "next/navigation";
 
-const CallbackPage: React.FC = () => {
-  const searchParams = useSearchParams();
-  const [error, setError] = useState<string | null>(null);
-  const [accessToken, setAccessToken] = useState<string | null>(null);
+export default async function CallbackPage({
+  searchParams,
+}: {
+  searchParams: { code: string };
+}) {
+  const code = (await searchParams).code;
 
-  useEffect(() => {
-    const code = searchParams.get("code");
-
-    if (!code) {
-      setError("Authorization code is missing.");
-      return;
-    }
-
-    axios
-      .post("/api/auth/calendly/callback", { code })
-      .then((response) => setAccessToken(response.data.accessToken))
-      .catch((err) =>
-        setError(err.response?.data?.error || "An error occurred.")
-      );
-  }, [searchParams]);
-
-  if (error) {
-    return <div>Error: {error}</div>;
+  if (!code) {
+    return <p> Authorization code not found.</p>;
   }
+ 
 
-  if (!accessToken) {
-    return <div>Loading...</div>;
+  try {
+    // const response = await axios.post("/api/auth/calendly/refresh-token", { code });
+    const res = await exchangeCodeForToken(code);
+    const { access_token, refresh_token } = res;
+      const options = {
+        method: "POST",
+        url: `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/calendly/set-cookies`,
+        headers: {
+          Accept: "*/*",
+          "Content-Type": "application/json",
+        },
+        data: {
+          access_token: access_token,
+          refresh_token:refresh_token,
+        },
+      };
+
+      try {
+        const { data } = await axios.request(options);
+        console.log(data);
+        return <p>calendly cookies set</p>
+        // redirect("/?calendly-auth=success");
+      } catch (error) {
+        console.error(error);
+        return <p>Failed to set cookies. Please try again.</p>;
+      }
+  
+    // redirect("/?calendly-auth=success");
+  } catch (error) {
+    console.error("Error exchanging code for token:", error);
+    return <p>Error during authentication.</p>;
   }
-
-  return <div>Access Token: {accessToken}</div>;
-};
-
-export default CallbackPage;
+}
