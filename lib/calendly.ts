@@ -26,8 +26,8 @@ export const exchangeCodeForToken = async (code: string) => {
 export const refreshAccessToken = async (refreshToken: string) => {
   const response = await axios.post("https://auth.calendly.com/oauth/token", {
     grant_type: "refresh_token",
-    client_id: process.env.NEXT_PUBLIC_CALENDLY_CLIENT_ID!,
-    client_secret: process.env.CALENDLY_CLIENT_SECRET!,
+    // client_id: process.env.NEXT_PUBLIC_CALENDLY_CLIENT_ID!,
+    // client_secret: process.env.CALENDLY_CLIENT_SECRET!,
     refresh_token: refreshToken,
   });
 

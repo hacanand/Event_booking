@@ -23,23 +23,28 @@ export default async function CallbackPage({
     const tokens = response?.tokens;
     // console.log(tokens);
 
-    const options = {
-      method: "POST",
-      url: `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/google-calendar/set-cookies`,
-      headers: {
-        Accept: "*/*",
-        "User-Agent": "Thunder Client (https://www.thunderclient.com)",
-        "Content-Type": "application/json",
-      },
-      data: {
-        access_token: tokens.access_token,
-        refresh_token: tokens.refresh_token,
-      },
-      withCredentials: true,
-    };
+    // const options = {
+    //   method: "POST",
+    //   url: `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/google-calendar/set-cookies`,
+    //   headers: {
+    //     Accept: "*/*",
+    //     "User-Agent": "Thunder Client (https://www.thunderclient.com)",
+    //     "Content-Type": "application/json",
+    //   },
+    //   data: {
+    //     access_token: tokens.access_token,
+    //     refresh_token: tokens.refresh_token,
+    //   },
+    //   withCredentials: true,
+    // };
 
     try {
-      const response = await axios.request(options);
+      // const response = await axios.request(options);
+      const resp = await axiosInstance.post("/api/auth/google-calendar/set-cookies", {
+        access_token: tokens.access_token,
+        refresh_token: tokens.refresh_token,
+      });
+      console.log(resp);
       const user = await currentUser()
       const user_id = user?.id;
       const updatedUser = axiosInstance.put('/api/users', {

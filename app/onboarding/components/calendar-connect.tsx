@@ -1,13 +1,19 @@
 "use client";
 
+import { getCalendlyAuthUrl } from "@/lib/calendly";
 import { Button } from "../../components/ui/button";
 import { Card } from "../../components/ui/card";
+import   {   useRouter } from "next/navigation";
+// import { getGoogleAuthUrl } from "@/lib/google";
 
-interface CalendarConnectProps {
-  onComplete: () => void;
-}
+// interface CalendarConnectProps {
+//   onComplete: () => void;
+// }
 
-export function CalendarConnect({ onComplete }: CalendarConnectProps) {
+export function CalendarConnect() {
+  const calendlyAuthUrl = getCalendlyAuthUrl();
+  // const googleAuthUrl = getGoogleAuthUrl();
+  const router=useRouter();
   return (
     <div className="space-y-6">
       <div className="text-center">
@@ -26,7 +32,7 @@ export function CalendarConnect({ onComplete }: CalendarConnectProps) {
             className="w-full"
             onClick={() => {
               // Add Calendly integration logic here
-              onComplete();
+            router.push(calendlyAuthUrl);
             }}
           >
             Connect with Calendly
@@ -37,9 +43,10 @@ export function CalendarConnect({ onComplete }: CalendarConnectProps) {
           <Button
             variant="outline"
             className="w-full"
-            onClick={() => {
+            onClick={async () => {
               // Add Google Calendar integration logic here
-              onComplete();
+              // onComplete();s
+              // router.push(await googleAuthUrl);s
             }}
           >
             Connect with Google Calendar
