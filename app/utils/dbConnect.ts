@@ -33,6 +33,7 @@ async function dbConnect(): Promise<mongoose.Connection> {
   }
 
   cached.conn = await cached.promise;
+  console.log("Connected to MongoDB");
   return cached.conn;
 }
 

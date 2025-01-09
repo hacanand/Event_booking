@@ -105,8 +105,25 @@ import CustomerDashboardPage from "./customer-dashboard/page";
 import { getCalendlyAuthUrl } from "@/lib/calendly";
 import { getGoogleAuthUrl } from "@/lib/google";
 import Link from "next/link";
+// import { useClerk } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
+import axios from "axios";
+import axiosInstance from "./utils/axiosInstance";
+// axios.defaults;
 
-export default function Home() {
+export default async function Home() {
+  const user = await currentUser();
+  if (user) {
+    //create user in db
+    const res = await axiosInstance.post("/api/users", {
+      clerkId: user?.id,
+      userType: user?.publicMetadata?.role,
+      email: user?.emailAddresses[0]?.emailAddress,
+      firstName: user?.firstName,
+      lastName: user?.lastName,
+      profilePicture: user?.imageUrl,
+    });
+  }
   // redirect("/customer-dashboard");
   // return <CustomerDashboardPage />;
   const authUrl = getCalendlyAuthUrl();

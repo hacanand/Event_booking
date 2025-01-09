@@ -58,7 +58,7 @@ export default function LoginForm() {
             
             }
           }}
-          path="/login"
+          path="/"
           routing="path"
           redirectUrl={handleOAuthCallback("/")}
           signUpUrl="/sign-up"

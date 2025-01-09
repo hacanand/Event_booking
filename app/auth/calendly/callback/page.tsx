@@ -1,5 +1,6 @@
 
-import { exchangeCodeForToken } from "@/lib/calendly";
+import { exchangeCodeForToken, saveCalendlyUserAndUrlData } from "@/lib/calendly";
+import { currentUser } from "@clerk/nextjs/server";
 import axios from "axios";
 import { redirect } from "next/navigation";
 
@@ -34,7 +35,14 @@ export default async function CallbackPage({
 
       try {
         const { data } = await axios.request(options);
-        console.log(data);
+        // console.log(data);
+          const user=await currentUser()
+         if (user?.id) {
+           const res = await saveCalendlyUserAndUrlData(user.id, access_token);
+            console.log(res);
+         } else {
+           return <p>User ID not found.</p>;
+         }
         return <p>calendly cookies set</p>
         // redirect("/?calendly-auth=success");
       } catch (error) {

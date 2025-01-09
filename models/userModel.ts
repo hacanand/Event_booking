@@ -1,55 +1,30 @@
-import mongoose, { Document, Schema, Model } from 'mongoose';
+import mongoose, { Document, Schema, Model } from "mongoose";
 
+// Define the IUser interface
 interface IUser extends Document {
-  id: string;
-  type: "user";
-  userType: "salesperson" | "customer";
-  clerkId: string;
+  clerkId: string; // Simplified type definitions for better readability
+  userType: string;
+  // schedulesEventUrl  array of strings
   schedulesEventUrl?: string;
   email: string;
-  fullName: string;
+  firstName?: string;
+  lastName?: string;
   profilePicture?: string;
-  calendly_token?: {
-    access_token: string;
-    refresh_token: string;
-    scope: string;
-    token_type: string;
-    owner: string;
-    organization: string;
-  };
-  // calendlyAccessToken?: string;
-  // calendlyRefreshToken?: string;
-  calendlyUserId?: string;
-  google_calendar_token?: {
-    access_token: string;
-    refresh_token: string;
-    scope: string;
-    token_type: string;
-    expiry_date: number;
-  };
+  calendlyUserUrl?: string;
+  google_refresh_token?: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
+// Define the schema for the User model
 const userSchema: Schema<IUser> = new Schema(
   {
-    id: {
+    clerkId: {
       type: String,
       required: true,
       unique: true,
     },
-    type: {
-      type: String,
-      enum: ["user"],
-      required: true,
-      default: "user",
-    },
     userType: {
-      type: String,
-      enum: ["salesperson", "customer"],
-      required: true,
-    },
-    clerkId: {
       type: String,
       required: true,
     },
@@ -61,37 +36,26 @@ const userSchema: Schema<IUser> = new Schema(
       type: String,
       required: true,
       unique: true,
-      match: [/^\S+@\S+\.\S+$/, "Please provide a valid email address"],
     },
-    fullName: {
+    firstName: {
       type: String,
-      required: true,
-      trim: true,
+      default: null,
+    },
+    lastName: {
+      type: String,
+      default: null,
     },
     profilePicture: {
       type: String,
       default: null,
     },
-    calendly_token: {
-      access_token: { type: String, required: true },
-      refresh_token: { type: String, required: true },
-      scope: { type: String, required: true },
-      token_type: { type: String, required: true },
-      owner: { type: String, required: true },
-      organization: { type: String, required: true },
-    },
-    calendlyUserId: {
+    calendlyUserUrl: {
       type: String,
-      required: function (this: IUser) {
-        return this.userType === "salesperson";
-      },
+      default: null,
     },
-    google_calendar_token: {
-      access_token: { type: String, required: false },
-      refresh_token: { type: String, required: false },
-      scope: { type: String, required: false },
-      token_type: { type: String, required: false },
-      expiry_date: { type: Number, required: false },
+    google_refresh_token: {
+      type: String,
+      default: null,
     },
     createdAt: {
       type: Date,
@@ -104,16 +68,19 @@ const userSchema: Schema<IUser> = new Schema(
     },
   },
   {
-    timestamps: { createdAt: true, updatedAt: true },
+    timestamps: true, // Automatically manage createdAt and updatedAt
     versionKey: false, // Remove __v field
   }
 );
 
-userSchema.pre<IUser>('save', function (next) {
+// Pre-save middleware to update the `updatedAt` field
+userSchema.pre<IUser>("save", function (next) {
   this.updatedAt = new Date();
   next();
 });
 
-const User: Model<IUser> = mongoose.model<IUser>('User', userSchema);
+// Create the User model
+const User: Model<IUser> =
+  mongoose.models.User || mongoose.model<IUser>("User", userSchema);
 
 export default User;

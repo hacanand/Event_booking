@@ -20,7 +20,7 @@ export function getGoogleAuthUrl() {
     scope: SCOPES,
   });
 }
-async function getAccessToken() {
+export async function getAccessToken() {
   const accessToken = (await cookies()).get("google-access-token");
   const refreshToken = (await cookies()).get("google-refresh-token");
 
