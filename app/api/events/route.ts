@@ -1,38 +1,64 @@
-// schedulesEventUrl;
+// import { auth } from "google-auth-library";
+import { authorize } from "../(auth)";
+import { listEvents } from "../(apiFunction)";
+// import { NextApiResponse } from "next";
+import { NextResponse } from "next/server";
 
-import axios from "axios";
-import { cookies } from "next/headers";
-import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest, res: NextResponse) {
-  const cookiesObject = await cookies();
-  const calendly_token = cookiesObject.get("calendly-access-token");
+export async function GET() {
   try {
-    var options = {
-      method: "GET",
-      url: "https://api.calendly.com/event_types",
-      params: {
-        user: "https://api.calendly.com/users/82d3f20e-56d7-47fd-9b92-14d9566f5434",
-      },
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer  ${calendly_token}`, // "Bearer " + calendly_token,
-      },
-    };
-
-    axios
-      .request(options)
-      .then(function (response) {
-        console.log(response.data);
-      })
-      .catch(function (error) {
-        console.error(error);
-      });
-  } catch (error) {
-    console.error("Error in API handler:", error);
+    // Get the authorized client
+    const auth = await authorize();
+    // Fetch events
+    const eventsResponse = await listEvents(auth);
+    return eventsResponse; // Ensure the response from listEvents is returned
+  } catch (err) {
+    console.error("Error in route handler:", err);
     return NextResponse.json({
-      message: "Internal Server Error",
-      error: (error as any).message,
+      message: "Failed to retrieve events",
+      error: (err as Error).message,
+      status: 500,
     });
   }
 }
+ 
+// import { NextApiRequest, NextApiResponse } from "next";
+  
+// import Event from "../../../models/eventModel";
+// import dbConnect from "@/app/utils/dbConnect";
+
+// export default async function handler(
+//   req: NextApiRequest,
+//   res: NextApiResponse
+// ) {
+//   const { method } = req;
+
+//   await dbConnect();
+
+//   switch (method) {
+//     case "GET":
+//       try {
+//         const events = await Event.find({});
+//         res.status(200).json(events);
+//       } catch (error) {
+//         res.status(500).json({ error: "Failed to fetch events" });
+//       }
+//       break;
+
+//     case "POST":
+//       try {
+//         const newEvent = await Event.create(req.body);
+//         res.status(201).json(newEvent);
+//       } catch (error: any) {
+//         res
+//           .status(400)
+//           .json({ error: error.message || "Failed to create event" });
+//       }
+//       break;
+
+//     default:
+//       res.setHeader("Allow", ["GET", "POST"]);
+//       res.status(405).end(`Method ${method} Not Allowed`);
+//   }
+// }
+

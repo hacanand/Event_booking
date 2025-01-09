@@ -1,0 +1,32 @@
+import dbConnect from "@/app/utils/dbConnect";
+import User from "@/models/userModel";
+import { NextRequest, NextResponse } from "next/server";
+ 
+
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { userId: string } }
+) {
+  await dbConnect();
+
+  const { userId } = ( await params);
+
+  try {
+    const user = await User.findOne({ clerkId: userId });
+
+    if (!user) {
+      return NextResponse.json(
+        { success: false, message: "User not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ success: true, data: user }, { status: 200 });
+  } catch (error: any) {
+    console.error("Error fetching user:", error);
+    return NextResponse.json(
+      { success: false, message: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
+}

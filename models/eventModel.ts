@@ -2,7 +2,6 @@ import mongoose, { Document, Schema, Model } from "mongoose";
 
 interface IEvent extends Document {
   id: string;
-  type: "event";
   createrId: string;
   eventName: string;
   eventDescription: string;
@@ -20,12 +19,6 @@ const eventSchema: Schema<IEvent> = new Schema(
       type: String,
       required: [true, "Event ID is required"],
       unique: true,
-    },
-    type: {
-      type: String,
-      enum: ["event"],
-      required: true,
-      default: "event",
     },
     createrId: {
       type: String,

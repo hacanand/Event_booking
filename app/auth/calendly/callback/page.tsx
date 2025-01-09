@@ -36,6 +36,7 @@ export default async function CallbackPage({
       try {
         const { data } = await axios.request(options);
         // console.log(data);
+        console.log(access_token,"refreshToken:-",refresh_token)
           const user=await currentUser()
          if (user?.id) {
            const res = await saveCalendlyUserAndUrlData(user.id, access_token);

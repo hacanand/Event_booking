@@ -102,7 +102,7 @@
 // }
 import { redirect } from "next/navigation";
 import CustomerDashboardPage from "./customer-dashboard/page";
-import { getCalendlyAuthUrl } from "@/lib/calendly";
+import { getCalendlyAuthUrl, refreshAccessToken } from "@/lib/calendly";
 import { getGoogleAuthUrl } from "@/lib/google";
 import Link from "next/link";
 // import { useClerk } from "@clerk/nextjs";
@@ -128,12 +128,15 @@ export default async function Home() {
   // return <CustomerDashboardPage />;
   const authUrl = getCalendlyAuthUrl();
   const googleAuthUrl = getGoogleAuthUrl();
+  const res = refreshAccessToken("k4rMvs9SleIwq7A3YoZGxlWDAmz_xsNkEnUCmbck-mg");
+  console.log(res);
 
   return (
     <div>
       <h1>Sign in to Calendly</h1>
       <Link href={authUrl}>Sign in with Calendly</Link>
       <br />
+
       <h1>Google Calendar Login</h1>
       {/* //open link in new windowt on onClick */}
      <Link   href={googleAuthUrl}>Sign in with Google</Link>
