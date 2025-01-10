@@ -7,7 +7,7 @@ export const registerCalendlyWebhook = async (access_token:string,orgURI:string)
     const response = await axios.post(
       "https://api.calendly.com/webhook_subscriptions",
       {
-        url: "https://a2dd-2401-4900-1cab-160b-2b4-f720-f54c-2441.ngrok-free.app",
+        url: "https://3838-2409-40e4-2051-92a2-90c5-e45a-5fb2-f786.ngrok-free.app/api/webhook",
         //   `${process.env.NEXT_PUBLIC_BASE_URL}/api/webhook`,
         events: ["invitee.created", "invitee.canceled"], // Events to subscribe to
         organization: orgURI, // Replace ORG_ID with your organization ID
