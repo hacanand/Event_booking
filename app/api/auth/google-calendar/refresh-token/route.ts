@@ -28,7 +28,6 @@ export async function POST(req: NextRequest) {
     // Refresh the access token
     const tokenResponse = await client.getAccessToken();
     const { token } = tokenResponse;
-
     if (!token) {
       return NextResponse.json(
         { error: "Failed to fetch access token" },

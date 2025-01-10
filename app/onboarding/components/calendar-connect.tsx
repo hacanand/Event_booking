@@ -1,10 +1,10 @@
-"use client";
-
+ 'use client'
 import { getCalendlyAuthUrl } from "@/lib/calendly";
 import { Button } from "../../components/ui/button";
 import { Card } from "../../components/ui/card";
-import   {   useRouter } from "next/navigation";
+import   {   redirect, useRouter } from "next/navigation";
 // import { getGoogleAuthUrl } from "@/lib/google";
+import Link from "next/link";
 
 // interface CalendarConnectProps {
 //   onComplete: () => void;
@@ -43,11 +43,7 @@ export function CalendarConnect() {
           <Button
             variant="outline"
             className="w-full"
-            onClick={async () => {
-              // Add Google Calendar integration logic here
-              // onComplete();s
-              // router.push(await googleAuthUrl);s
-            }}
+            
           >
             Connect with Google Calendar
           </Button>

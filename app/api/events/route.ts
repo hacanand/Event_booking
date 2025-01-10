@@ -1,64 +1,85 @@
-// import { auth } from "google-auth-library";
-import { authorize } from "../(auth)";
-import { listEvents } from "../(apiFunction)";
-// import { NextApiResponse } from "next";
-import { NextResponse } from "next/server";
+import { getUpdatedAuthClient } from "@/lib/google";
+import Event from "@/models/eventModel";
+import { google } from "googleapis";
+import { NextRequest, NextResponse } from "next/server";
 
+const validateEventData = (data: any) => {
+  const errors: string[] = [];
 
-export async function GET() {
+  if (!data.createrId) errors.push("Creator ID is required.");
+  if (!data.eventName) errors.push("Event name is required.");
+  if (!data.eventDuration || data.eventDuration <= 0)
+    errors.push("Event duration must be greater than 0.");
+  if (!data.startTime) errors.push("Start time is required.");
+  if (!data.endTime) errors.push("End time is required.");
+
+  if (data.startTime && data.endTime) {
+    const startTime = new Date(data.startTime);
+    const endTime = new Date(data.endTime);
+    if (startTime >= endTime) {
+      errors.push("Start time must be before end time.");
+    }
+
+    const durationInMinutes =
+      (endTime.getTime() - startTime.getTime()) / (1000 * 60);
+    if (data.eventDuration !== durationInMinutes) {
+      errors.push(
+        "Event duration must match the difference between startTime and endTime."
+      );
+    }
+  }
+
+  return errors;
+};
+
+export async function POST(req: NextRequest) {
   try {
-    // Get the authorized client
-    const auth = await authorize();
-    // Fetch events
-    const eventsResponse = await listEvents(auth);
-    return eventsResponse; // Ensure the response from listEvents is returned
-  } catch (err) {
-    console.error("Error in route handler:", err);
-    return NextResponse.json({
-      message: "Failed to retrieve events",
-      error: (err as Error).message,
-      status: 500,
-    });
+    const data = await req.json();
+
+    // Validate data
+    const validationErrors = validateEventData(data);
+    if (validationErrors.length > 0) {
+      return NextResponse.json(
+        { success: false, errors: validationErrors },
+        { status: 400 }
+      );
+    }
+    const newEvent = await Event.create(data);
+    return NextResponse.json(
+      { success: true, event: newEvent },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error("Error creating event:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 }
+    );
   }
 }
+
  
-// import { NextApiRequest, NextApiResponse } from "next";
-  
-// import Event from "../../../models/eventModel";
-// import dbConnect from "@/app/utils/dbConnect";
+export async function GET() {
+  try {
+    const authClient = await getUpdatedAuthClient(); // Ensure this works
+    console.log("AuthClient:", authClient.credentials);
 
-// export default async function handler(
-//   req: NextApiRequest,
-//   res: NextApiResponse
-// ) {
-//   const { method } = req;
+    const calendar = google.calendar({ version: "v3", auth: authClient });
 
-//   await dbConnect();
+    const events = await calendar.events.list({
+      calendarId: "primary", // Ensure 'primary' or other calendar ID is specified
+      maxResults: 10, // Optional: limit results for testing
+      singleEvents: true, // Optional: expand recurring events into single instances
+      orderBy: "startTime", // Optional: sort events by start time
+    });
 
-//   switch (method) {
-//     case "GET":
-//       try {
-//         const events = await Event.find({});
-//         res.status(200).json(events);
-//       } catch (error) {
-//         res.status(500).json({ error: "Failed to fetch events" });
-//       }
-//       break;
-
-//     case "POST":
-//       try {
-//         const newEvent = await Event.create(req.body);
-//         res.status(201).json(newEvent);
-//       } catch (error: any) {
-//         res
-//           .status(400)
-//           .json({ error: error.message || "Failed to create event" });
-//       }
-//       break;
-
-//     default:
-//       res.setHeader("Allow", ["GET", "POST"]);
-//       res.status(405).end(`Method ${method} Not Allowed`);
-//   }
-// }
-
+    console.log("Events:", events.data.items);
+    return NextResponse.json(events.data.items); // Adjust response format as needed
+  } catch (error: any) {
+    console.error("Error:", error.response?.data || error.message);
+    return NextResponse.json({ error: error.message });
+  }
+}

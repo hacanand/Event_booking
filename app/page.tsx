@@ -17,10 +17,13 @@ export default async function Home() {
       lastName: user?.lastName,
       profilePicture: user?.imageUrl,
     });
+  //    const respo = await axiosInstance.get("/api/events");
+  //    console.log(respo);
   }
-  const cookieStore = await cookies();
-  const res = cookieStore.get('google-access-token'
-  )
- console.log(res?.value)
+ 
+//   const cookieStore = await cookies();
+//   const res = cookieStore.get('google-access-token'
+//   )
+//  console.log(res?.value)
   return <CalendarConnect />;
 }

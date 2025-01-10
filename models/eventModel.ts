@@ -1,27 +1,22 @@
 import mongoose, { Document, Schema, Model } from "mongoose";
 
 interface IEvent extends Document {
-  id: string;
   createrId: string;
   eventName: string;
   eventDescription: string;
   eventDuration: number;
   startTime: Date;
   endTime: Date;
-  calendlyEventId: string;
+  // calendlyEventId: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
 const eventSchema: Schema<IEvent> = new Schema(
   {
-    id: {
-      type: String,
-      required: [true, "Event ID is required"],
-      unique: true,
-    },
     createrId: {
       type: String,
+      unique: true,
       required: [true, "Creator ID is required"],
       ref: "User", // Reference to the User model
     },
@@ -33,9 +28,8 @@ const eventSchema: Schema<IEvent> = new Schema(
     },
     eventDescription: {
       type: String,
-      required: [true, "Event description is required"],
+      // required: [true, "Event description is required"],
       trim: true,
-      maxlength: [500, "Event description must not exceed 500 characters"],
     },
     eventDuration: {
       type: Number,
@@ -49,11 +43,6 @@ const eventSchema: Schema<IEvent> = new Schema(
     endTime: {
       type: Date,
       required: [true, "End time is required"],
-    },
-    calendlyEventId: {
-      type: String,
-      required: [true, "Calendly event ID is required"],
-      unique: true,
     },
     createdAt: {
       type: Date,
@@ -117,6 +106,7 @@ eventSchema.statics.findByCreator = async function (creatorId: string) {
 };
 
 /// EXPORT MODEL
-const Event: Model<IEvent> = mongoose.model<IEvent>("Event", eventSchema);
+const Event: Model<IEvent> =
+  mongoose.models.Event || mongoose.model<IEvent>("Event", eventSchema);
 
 export default Event;

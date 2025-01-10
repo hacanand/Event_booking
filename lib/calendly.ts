@@ -42,14 +42,13 @@ export const saveCalendlyUserAndUrlData = async (userId:string,accessToken: stri
   });
   const uri = response.data.resource.uri;
   const eventTypes = await getCalendlyEventTypes(uri, accessToken);
-  console.log(eventTypes);
+  // console.log(eventTypes);
   const scheduled_url = eventTypes.collection[0]?.scheduling_url;
-  const updateUser = await axiosInstance.put("/api/users", {
-    clerkId: userId,
+  await axiosInstance.put(`/api/users/${userId}`, {
     schedulesEventUrl: scheduled_url,
     calendlyUserUrl: uri,
   });
-  return updateUser; 
+  return response.data; 
 };
 
 export async function getCalendlyEventTypes(uri: string, accessToken: string) {
