@@ -1,6 +1,6 @@
 
 // import { routeChange } from "@/app/actions/redirect";
-import { registerCalendlyWebhook } from "@/app/scripts/registerWebhook";
+import { registerCalendlyWebhook } from "@/scripts/registerWebhook";
 import axiosInstance from "@/app/utils/axiosInstance";
 import { exchangeCodeForToken, saveCalendlyUserAndUrlData } from "@/lib/calendly";
 import { currentUser } from "@clerk/nextjs/server";
