@@ -1,5 +1,17 @@
 import mongoose, { Document, Schema, Model } from "mongoose";
 
+
+import {  Credentials } from 'google-auth-library';
+
+// Define TypeScript interface for the token structure
+// export interface IGoogleCalendarToken {
+//   access_token: string;
+//   refresh_token: string;
+//   scope: string;
+//   token_type: string;
+//   expiry_date: number;
+// }
+
 // Define the IUser interface
 interface IUser extends Document {
   clerkId: string; // Simplified type definitions for better readability
@@ -12,9 +24,39 @@ interface IUser extends Document {
   profilePicture?: string;
   calendlyUserUrl?: string;
   google_refresh_token?: string;
+  googleCalendarToken?: Credentials;
   createdAt: Date;
   updatedAt: Date;
 }
+
+
+
+// Create the schema for the Google Calendar Token
+const GoogleCalendarTokenSchema = new Schema<Credentials>(
+  {
+    access_token: {
+      type: String,
+      required: true,
+    },
+    refresh_token: {
+      type: String,
+      required: true,
+    },
+    scope: {
+      type: String,
+      required: true,
+    },
+    token_type: {
+      type: String,
+      required: true,
+    },
+    expiry_date: {
+      type: Number,
+      required: true,
+    },
+  },
+  { _id: false } // Disable _id for the nested schema
+);
 
 // Define the schema for the User model
 const userSchema: Schema<IUser> = new Schema(
@@ -53,8 +95,8 @@ const userSchema: Schema<IUser> = new Schema(
       type: String,
       default: null,
     },
-    google_refresh_token: {
-      type: String,
+    googleCalendarToken: {
+      type: GoogleCalendarTokenSchema,
       default: null,
     },
     createdAt: {

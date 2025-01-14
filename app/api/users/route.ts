@@ -37,7 +37,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
       lastName,
       profilePicture,
       calendlyUserUrl,
-      google_refresh_token,
+      googleCalendarToken,
     } = body;
 
     if (!clerkId || !userType || !email) {
@@ -60,7 +60,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
       lastName: lastName || null,
       profilePicture: profilePicture || null,
       calendlyUserUrl: calendlyUserUrl || null,
-      google_refresh_token: google_refresh_token || null,
+      googleCalendarToken: googleCalendarToken || null,
     };
 
     const user = await User.create(userObj);
@@ -81,51 +81,51 @@ export async function POST(req: NextRequest, res: NextResponse) {
 }
 
  
-export async function PUT(req: NextRequest) {
-  try {
-    await dbConnect(); // Ensure database connection
-    const body = await req.json();
+// export async function PUT(req: NextRequest) {
+//   try {
+//     await dbConnect(); // Ensure database connection
+//     const body = await req.json();
 
-    const { clerkId, ...updateFields } = body;
+//     const { clerkId, ...updateFields } = body;
 
-    if (!clerkId) {
-      return NextResponse.json(
-        {
-          success: false,
-          response: "clerkId is required to identify the user",
-        },
-        { status: 400 }
-      );
-    }
+//     if (!clerkId) {
+//       return NextResponse.json(
+//         {
+//           success: false,
+//           response: "clerkId is required to identify the user",
+//         },
+//         { status: 400 }
+//       );
+//     }
 
-    // Perform findOneAndUpdate using $set to update only provided fields
-    const user = await User.findOneAndUpdate(
-      { clerkId }, // Query to find the user by clerkId
-      { $set: updateFields }, // Updates the fields provided in the body
-      { new: true } // Return the updated document
-    );
+//     // Perform findOneAndUpdate using $set to update only provided fields
+//     const user = await User.findOneAndUpdate(
+//       { clerkId }, // Query to find the user by clerkId
+//       { $set: updateFields }, // Updates the fields provided in the body
+//       { new: true } // Return the updated document
+//     );
 
-    if (!user) {
-      return NextResponse.json(
-        { success: false, response: "User not found" },
-        { status: 404 }
-      );
-    }
+//     if (!user) {
+//       return NextResponse.json(
+//         { success: false, response: "User not found" },
+//         { status: 404 }
+//       );
+//     }
 
-    return NextResponse.json({
-      data: user,
-      success: true,
-      response: "User updated successfully",
-      status: 200,
-    });
-  } catch (error: any) {
-    return NextResponse.json(
-      {
-        error: error.message,
-        success: false,
-        response: "Failed to update user",
-      },
-      { status: 500 }
-    );
-  }
-}
+//     return NextResponse.json({
+//       data: user,
+//       success: true,
+//       response: "User updated successfully",
+//       status: 200,
+//     });
+//   } catch (error: any) {
+//     return NextResponse.json(
+//       {
+//         error: error.message,
+//         success: false,
+//         response: "Failed to update user",
+//       },
+//       { status: 500 }
+//     );
+//   }
+// }

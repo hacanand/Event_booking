@@ -1,5 +1,6 @@
 import axiosInstance from "@/app/utils/axiosInstance";
 import axios from "axios";
+import { use } from "react";
 
 export const getCalendlyAuthUrl = (): string => {
   const clientId = process.env.NEXT_PUBLIC_CALENDLY_CLIENT_ID!;
@@ -74,3 +75,23 @@ export async function getCalendlyEventTypes(uri: string, accessToken: string) {
 }
 
  
+ 
+
+// const CALENDLY_API_BASE = "https://api.calendly.com";
+// const CALENDLY_ACCESS_TOKEN = process.env.CALENDLY_ACCESS_TOKEN; // Add this to your .env.local file
+ 
+// Fetch events from Calendly
+export async function getCalendlyEvents(): Promise<any> {
+  const response = await axios.get(
+    `${process.env.CALENDLY_API_BASE}/scheduled_events`,
+    {
+      params: {
+        user: "https://api.calendly.com/users/82d3f20e-56d7-47fd-9b92-14d9566f5434",
+      }, // Replace USER_ID with the actual user ID
+      headers: {
+        Authorization: `Bearer ${process.env.CALENDLY_ACCESS_TOKEN}`,
+      },
+    }
+  );
+  return response.data;
+}

@@ -2,6 +2,7 @@ import { getGoogleAuthClient } from "@/lib/google";
 import { routeChange } from "@/app/actions/redirect"; // Assume this is the server-side `redirect` function
 import { clerkClient, currentUser } from "@clerk/nextjs/server";
 import axiosInstance from "@/app/utils/axiosInstance";
+import { updateUserToken } from "@/app/actions/google-calendar/token";
  
 
 export default async function CallbackPage({
@@ -33,9 +34,7 @@ export default async function CallbackPage({
       // console.log(resp);
       const user = await currentUser()
       const user_id = user?.id;
-      await axiosInstance.put(`/api/users/${user_id}`, {
-        google_refresh_token: tokens.refresh_token,
-      });
+      await updateUserToken(user_id!, tokens);
       await clerk_client.users.updateUserMetadata(user_id!, {
         publicMetadata: {
         tokens: tokens,

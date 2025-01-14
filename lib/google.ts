@@ -22,75 +22,100 @@ export function getGoogleAuthUrl() {
 
 // import { google } from "googleapis";
 
-export async function getUpdatedAuthClient() {
-  try {
-    const user = await currentUser();
-    console.log("Current User:", user);
+// export async function getUpdatedAuthClient() {
+//   try {
+//     const user = await currentUser();
+//     console.log("Current User:", user);
 
-    if (!user) {
-      throw new Error("No user logged in");
-    }
+//     if (!user) {
+//       throw new Error("No user logged in");
+//     }
 
-    const tokenDoc = user?.publicMetadata.tokens as {
-      accessToken: string;
-      refreshToken: string;
-      expiryDate: number;
-    };
-    console.log("Token Doc:", tokenDoc);
+//     const tokenDoc = user?.publicMetadata.tokens as {
+//       accessToken: string;
+//       refreshToken: string;
+//       expiryDate: number;
+//     };
+//     // console.log("Token Doc:", tokenDoc);
 
-    if (
-      !tokenDoc ||
-      !tokenDoc.accessToken ||
-      !tokenDoc.refreshToken ||
-      !tokenDoc.expiryDate
-    ) {
-      throw new Error("Invalid or missing tokens in user metadata");
-    }
+//     if (
+//       !tokenDoc ||
+//       !tokenDoc.accessToken ||
+//       !tokenDoc.refreshToken ||
+//       !tokenDoc.expiryDate
+//     ) {
+//       throw new Error("Invalid or missing tokens in user metadata");
+//     }
 
-    const { accessToken, refreshToken, expiryDate } = tokenDoc;
+//     const { accessToken, refreshToken, expiryDate } = tokenDoc;
 
-    const oAuth2Client = new google.auth.OAuth2(
-      process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-      process.env.GOOGLE_CLIENT_SECRET,
-      process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI
-    );
+//     const oAuth2Client = new google.auth.OAuth2(
+//       process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+//       process.env.GOOGLE_CLIENT_SECRET,
+//       process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI
+//     );
 
-    oAuth2Client.setCredentials({
-      access_token: accessToken,
-      refresh_token: refreshToken,
-      expiry_date: expiryDate,
-    });
+//     oAuth2Client.setCredentials({
+//       access_token: accessToken,
+//       refresh_token: refreshToken,
+//       expiry_date: expiryDate,
+//     });
 
-    // Refresh token if expired
-    if (Date.now() >= expiryDate) {
-      console.log("Token expired, refreshing...");
-      const tokens = await oAuth2Client.refreshAccessToken();
-      console.log("Refreshed Tokens:", tokens);
+//     // Refresh token if expired
+//     if (Date.now() >= expiryDate) {
+//       console.log("Token expired, refreshing...");
+//       const tokens = await oAuth2Client.refreshAccessToken();
+//       console.log("Refreshed Tokens:", tokens);
 
-      const newAccessToken = tokens.credentials.access_token!;
-      const newExpiryDate = tokens.credentials.expiry_date!;
+//       const newAccessToken = tokens.credentials.access_token!;
+//       const newExpiryDate = tokens.credentials.expiry_date!;
 
-      // Update tokens in Clerk metadata
-      await (await clerkClient()).users.updateUserMetadata(user.id, {
-        publicMetadata: {
-          tokens: {
-            accessToken: newAccessToken,
-            refreshToken: refreshToken, // Keep the same refresh token
-            expiryDate: newExpiryDate,
-          },
-        },
-      });
+//       // Update tokens in Clerk metadata
+//       await (await clerkClient()).users.updateUserMetadata(user.id, {
+//         publicMetadata: {
+//           tokens: {
+//             accessToken: newAccessToken,
+//             refreshToken: refreshToken, // Keep the same refresh token
+//             expiryDate: newExpiryDate,
+//           },
+//         },
+//       });
 
-      oAuth2Client.setCredentials({
-        access_token: newAccessToken,
-        refresh_token: refreshToken,
-        expiry_date: newExpiryDate,
-      });
-    }
+//       oAuth2Client.setCredentials({
+//         access_token: newAccessToken,
+//         refresh_token: refreshToken,
+//         expiry_date: newExpiryDate,
+//       });
+//     }
 
-    return oAuth2Client;
-  } catch (error:any) {
-    console.error("Error in getUpdatedAuthClient:", error.message);
-    throw error;
-  }
+//     return oAuth2Client;
+//   } catch (error:any) {
+//     console.error("Error in getUpdatedAuthClient:", error.message);
+//     throw error;
+//   }
+// }
+
+
+
+ 
+// Set access token
+// export async function setGoogleAccessToken(accessToken: string) {
+//   oauth2Client.setCredentials({ access_token: accessToken });
+// }
+
+// Fetch events from Google Calendar
+export async function getGoogleCalendarEvents(
+  calendarId: string,
+  timeMin: string,
+  timeMax: string
+): Promise<any> {
+  
+  const authClient = getGoogleAuthClient();
+  const calendar = google.calendar({ version: "v3", auth: authClient });
+  const response = await calendar.events.list({
+    calendarId,
+    timeMin,
+    timeMax,
+  });
+  return response.data;
 }
