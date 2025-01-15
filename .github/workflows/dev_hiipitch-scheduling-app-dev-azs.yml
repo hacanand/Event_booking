@@ -27,14 +27,14 @@ jobs:
           MONGO_URI: ${{ secrets.MONGO_URI }}
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.CLERK_PUBLISHABLE_KEY }}
         run: |
-          npm ci
+          npm ci --only=production # Install production dependencies only
           npm run build
 
       # Package the necessary files into a zip
       - name: Create Deployment Zip
         run: |
           mkdir -p deployment-package
-          cp -r .next package.json package-lock.json public deployment-package
+          cp -r .next node_modules package.json package-lock.json public deployment-package
           cd deployment-package
           zip -r ../deployment-package.zip .
 
