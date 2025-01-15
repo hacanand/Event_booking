@@ -28,7 +28,7 @@ jobs:
       - name: Install dependencies and build
         run: |
           npm ci # Faster and more reliable than npm install for CI/CD
-          npm run lint || true # Allow the workflow to continue even if linting fails
+          npm run lint || echo "Linting errors ignored" # Continue even if linting fails
           npm run build # Ensure you have a build script in your package.json
 
       # Upload the build artifact
