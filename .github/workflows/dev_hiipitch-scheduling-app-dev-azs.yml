@@ -1,4 +1,4 @@
-name: Build and Deploy Next.js App with Zip
+name: Build and Deploy Next.js App with Optimizations
 
 on:
   push:
@@ -14,33 +14,36 @@ jobs:
       # Checkout the repository
       - uses: actions/checkout@v4
 
-      # Set up Node.js
+      # Set up Node.js with caching
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20.x'
           cache: 'npm'
 
-      # Install dependencies and build the application
+      # Install dependencies and build
       - name: Install Dependencies and Build
         env:
           MONGO_URI: ${{ secrets.MONGO_URI }}
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.CLERK_PUBLISHABLE_KEY }}
         run: |
-          npm ci --only=production # Install only production dependencies
+          npm ci --only=production
           npm run build || echo "Build completed with warnings"
 
-      # Ignore lint and TypeScript errors (optional, for strict environments)
-      - name: Ignore TypeScript and ESLint Errors
-        run: |
-          echo "Ignoring TypeScript and ESLint errors"
-          sed -i 's/"strict": true/"strict": false/' tsconfig.json
+      # Cache `.next` directory to speed up subsequent builds
+      - name: Cache `.next`
+        uses: actions/cache@v3
+        with:
+          path: .next
+          key: ${{ runner.os }}-next-cache
+          restore-keys: |
+            ${{ runner.os }}-next-cache
 
       # Package the necessary files into a zip
       - name: Create Deployment Zip
         run: |
           mkdir -p deployment-package
-          cp -r .next node_modules package.json package-lock.json public deployment-package
+          cp -r .next node_modules package.json public deployment-package
           cd deployment-package
           zip -r ../deployment-package.zip .
 
