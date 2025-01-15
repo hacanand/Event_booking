@@ -28,6 +28,7 @@ jobs:
       - name: Install dependencies and build
         run: |
           npm ci # Faster and more reliable than npm install for CI/CD
+          npm run lint || true # Allow the workflow to continue even if linting fails
           npm run build # Ensure you have a build script in your package.json
 
       # Upload the build artifact
@@ -60,4 +61,3 @@ jobs:
           slot-name: 'production' # Fixed slot-name to match the environment name
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_4385ACEF9DF8458AA19B97ACE948ED13 }}
           package: '.'
-
