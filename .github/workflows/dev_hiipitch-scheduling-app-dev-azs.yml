@@ -1,4 +1,4 @@
-name: Build and Deploy Next.js App
+name: Build and Deploy Next.js App with Zip
 
 on:
   push:
@@ -30,16 +30,18 @@ jobs:
           npm ci
           npm run build
 
-      # Package the necessary files for deployment
-      - name: Prepare Deployment Package
+      # Package the necessary files into a zip
+      - name: Create Deployment Zip
         run: |
           mkdir -p deployment-package
           cp -r .next package.json package-lock.json public deployment-package
+          cd deployment-package
+          zip -r ../deployment-package.zip .
 
-      # Deploy to Azure Web App
+      # Deploy the zip package to Azure Web App
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'hiipitch-scheduling-app-dev-azs'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
-          package: deployment-package
+          package: deployment-package.zip
