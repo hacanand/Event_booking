@@ -25,7 +25,7 @@ jobs:
       - name: Install Dependencies and Build
         env:
           MONGO_URI: ${{ secrets.MONGO_URI }}
-          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.CLERK_PUBLISHABLE_KEY }} # Ensure correct mapping
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.CLERK_PUBLISHABLE_KEY }}
         run: |
           npm ci
           npm run build
@@ -43,5 +43,5 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'hiipitch-scheduling-app-dev-azs'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_4385ACEF9DF8458AA19B97ACE948ED13 }}
           package: deployment-package.zip
