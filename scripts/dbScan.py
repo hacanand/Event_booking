@@ -1,11 +1,13 @@
 import time
 from datetime import datetime, timedelta
-import pymongo
+import os
 from pymongo import MongoClient
 
+
+MONGO_URI = os.getenv("MONGO_URI")
 # MongoDB connection setup
-client = MongoClient("mongodb://localhost:27017/")  # Update with your DB URI
-db = client["your_database_name"]  # Replace with your database name
+client = MongoClient(MONGO_URI)  # Update with your DB URI
+db = client["test"]  # Replace with your database name
 event_collection = db["events"]  # Replace with your collection name
 
 def get_upcoming_events():
