@@ -24,16 +24,22 @@ jobs:
       # Install dependencies and build the application
       - name: Install Dependencies and Build
         env:
-          MONGO_URI: ${{ secrets.MONGO_URI }} # Only include if needed during build
-          CLERK_PUBLISHABLE_KEY: ${{ secrets.CLERK_PUBLISHABLE_KEY }} # Only if needed during build
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+          CLERK_PUBLISHABLE_KEY: ${{ secrets.CLERK_PUBLISHABLE_KEY }}
         run: |
           npm ci
-          npm run build || echo "Build warnings ignored"
+          npm run build
 
-      # Deploy directly to Azure Web App
+      # Package the necessary files for deployment
+      - name: Prepare Deployment Package
+        run: |
+          mkdir -p deployment-package
+          cp -r .next package.json package-lock.json public deployment-package
+
+      # Deploy to Azure Web App
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'hiipitch-scheduling-app-dev-azs'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
-          package: '.next' # Deploy only the optimized build output
+          package: deployment-package
