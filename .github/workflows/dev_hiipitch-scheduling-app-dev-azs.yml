@@ -57,7 +57,7 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'hiipitch-scheduling-app-dev-azs'
-          slot-name: 'Production'
+          slot-name: 'production' # Fixed slot-name to match the environment name
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_4385ACEF9DF8458AA19B97ACE948ED13 }}
           package: '.'
 
