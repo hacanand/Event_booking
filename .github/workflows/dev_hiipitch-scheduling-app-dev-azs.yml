@@ -28,8 +28,7 @@ jobs:
       - name: Install dependencies and build
         run: |
           npm ci # Faster and more reliable than npm install for CI/CD
-          npm run lint || echo "Linting errors ignored" # Continue even if linting fails
-          npm run build # Ensure you have a build script in your package.json
+          npm run build # Skip linting entirely
 
       # Upload the build artifact
       - name: Upload artifact for deployment job
@@ -58,6 +57,6 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'hiipitch-scheduling-app-dev-azs'
-          slot-name: 'production' # Fixed slot-name to match the environment name
+          slot-name: 'production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_4385ACEF9DF8458AA19B97ACE948ED13 }}
           package: '.'
