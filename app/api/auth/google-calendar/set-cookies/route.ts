@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
     }
     const res = NextResponse.json({
       success: true,
-      message: "Tokens are set",
+      message: "Google Tokens are set",
       status: 200,
     });
     res.cookies.set("google-access-token", access_token, {
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     });
     res.cookies.set("google-refresh-token", refresh_token, {
       httpOnly: true,
-      // secure: process.env.NODE_ENV === "production",
+      secure: process.env.NODE_ENV === "production",
       path: "/",
       maxAge: 60 * 60 * 24 * 365 * 10,
     });

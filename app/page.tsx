@@ -25,5 +25,5 @@ export default async function Home() {
 //   const res = cookieStore.get('google-access-token'
 //   )
 //  console.log(res?.value)
-  return <CalendarConnect />;
+  return <CalendarConnect calendlyAuthUrl={""} googleAuthUrl={""} />;
 }

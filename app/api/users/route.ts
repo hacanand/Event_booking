@@ -36,8 +36,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
       firstName,
       lastName,
       profilePicture,
-      calendlyUserUrl,
-      googleCalendarToken,
     } = body;
 
     if (!clerkId || !userType || !email) {
@@ -55,12 +53,10 @@ export async function POST(req: NextRequest, res: NextResponse) {
       clerkId,
       userType,
       email,
-      schedulesEventUrl: schedulesEventUrl || null,
+      schedulesEventUrl: schedulesEventUrl || [],
       firstName: firstName || null,
       lastName: lastName || null,
       profilePicture: profilePicture || null,
-      calendlyUserUrl: calendlyUserUrl || null,
-      googleCalendarToken: googleCalendarToken || null,
     };
 
     const user = await User.create(userObj);

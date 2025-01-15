@@ -1,6 +1,6 @@
-// import axios from "axios";
-import { clerkClient, currentUser } from "@clerk/nextjs/server";
 import { google } from "googleapis";
+import { getCalendlyAuthUrl } from "./calendly";
+import {CalendarConnect} from "@/app/onboarding/components/calendar-connect"; // Adjust the path as necessary
 const SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"];
 
 export function getGoogleAuthClient() {
@@ -20,102 +20,54 @@ export function getGoogleAuthUrl() {
   });
 }
 
-// import { google } from "googleapis";
-
-// export async function getUpdatedAuthClient() {
-//   try {
-//     const user = await currentUser();
-//     console.log("Current User:", user);
-
-//     if (!user) {
-//       throw new Error("No user logged in");
-//     }
-
-//     const tokenDoc = user?.publicMetadata.tokens as {
-//       accessToken: string;
-//       refreshToken: string;
-//       expiryDate: number;
-//     };
-//     // console.log("Token Doc:", tokenDoc);
-
-//     if (
-//       !tokenDoc ||
-//       !tokenDoc.accessToken ||
-//       !tokenDoc.refreshToken ||
-//       !tokenDoc.expiryDate
-//     ) {
-//       throw new Error("Invalid or missing tokens in user metadata");
-//     }
-
-//     const { accessToken, refreshToken, expiryDate } = tokenDoc;
-
-//     const oAuth2Client = new google.auth.OAuth2(
-//       process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-//       process.env.GOOGLE_CLIENT_SECRET,
-//       process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI
-//     );
-
-//     oAuth2Client.setCredentials({
-//       access_token: accessToken,
-//       refresh_token: refreshToken,
-//       expiry_date: expiryDate,
-//     });
-
-//     // Refresh token if expired
-//     if (Date.now() >= expiryDate) {
-//       console.log("Token expired, refreshing...");
-//       const tokens = await oAuth2Client.refreshAccessToken();
-//       console.log("Refreshed Tokens:", tokens);
-
-//       const newAccessToken = tokens.credentials.access_token!;
-//       const newExpiryDate = tokens.credentials.expiry_date!;
-
-//       // Update tokens in Clerk metadata
-//       await (await clerkClient()).users.updateUserMetadata(user.id, {
-//         publicMetadata: {
-//           tokens: {
-//             accessToken: newAccessToken,
-//             refreshToken: refreshToken, // Keep the same refresh token
-//             expiryDate: newExpiryDate,
-//           },
-//         },
-//       });
-
-//       oAuth2Client.setCredentials({
-//         access_token: newAccessToken,
-//         refresh_token: refreshToken,
-//         expiry_date: newExpiryDate,
-//       });
-//     }
-
-//     return oAuth2Client;
-//   } catch (error:any) {
-//     console.error("Error in getUpdatedAuthClient:", error.message);
-//     throw error;
-//   }
-// }
-
-
+export async function setCredentialsRefreshToken(req: any) {
+  const oauth2Client = getGoogleAuthClient();
+  const refreshToken = await req.cookies["google-refresh-token"];
+  oauth2Client.setCredentials({ refresh_token: refreshToken });
+  return oauth2Client;
+}
 
  
-// Set access token
-// export async function setGoogleAccessToken(accessToken: string) {
-//   oauth2Client.setCredentials({ access_token: accessToken });
+// Fetch events from Google Calendar
+// export async function getGoogleCalendarEvents(
+//   calendarId: string,
+//   timeMin: string,
+//   timeMax: string
+// ): Promise<any> {
+
+//  const authClient = await setCredentialsRefreshToken(req, res);
+//   const calendar = google.calendar({ version: "v3", auth: authClient });
+//   const response = await calendar.events.list({
+//     calendarId,
+//     timeMin,
+//     timeMax,
+//   });
+//   return response.data;
 // }
 
-// Fetch events from Google Calendar
-export async function getGoogleCalendarEvents(
-  calendarId: string,
-  timeMin: string,
-  timeMax: string
-): Promise<any> {
-  
-  const authClient = getGoogleAuthClient();
-  const calendar = google.calendar({ version: "v3", auth: authClient });
-  const response = await calendar.events.list({
-    calendarId,
-    timeMin,
-    timeMax,
-  });
-  return response.data;
-}
+// export const authorize = async (): Promise<Auth.OAuth2Client> => {
+//   try {
+//     // Get credentials from environment variables
+//     const client_id = process.env.CLIENT_ID;
+//     const client_secret = process.env.CLIENT_SECRET;
+//     const redirect_uri = process.env.REDIRECT_URI;
+//     const token = process.env.TOKEN;
+
+//     if (!client_id || !client_secret || !redirect_uri || !token) {
+//       throw new Error("Missing required environment variables.");
+//     }
+
+//     const oAuth2Client = new google.auth.OAuth2(
+//       client_id,
+//       client_secret,
+//       redirect_uri
+//     );
+
+//     // Set credentials from environment variable
+//     oAuth2Client.setCredentials(JSON.parse(token));
+//     return oAuth2Client;
+//   } catch (err) {
+//     console.error("Error during authorization:", err);
+//     throw err; // Propagate the error to the caller
+//   }
+// };

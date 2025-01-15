@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 
 export async function routeChange(route: string) {
     try {
-        redirect(route,);
+        await redirect(route);
     } catch (error) {
         console.error('Redirect failed:', error);
         throw new Error('NEXT_REDIRECT');
