@@ -20,6 +20,8 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies and build
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }} # Add the MONGO_URI secret here
         run: |
           npm ci
           npm run build
