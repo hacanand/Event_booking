@@ -25,7 +25,7 @@ jobs:
       - name: Install Dependencies and Build
         env:
           MONGO_URI: ${{ secrets.MONGO_URI }}
-          CLERK_PUBLISHABLE_KEY: ${{ secrets.CLERK_PUBLISHABLE_KEY }}
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.CLERK_PUBLISHABLE_KEY }} # Ensure correct mapping
         run: |
           npm ci
           npm run build
