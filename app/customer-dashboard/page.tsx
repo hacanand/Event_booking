@@ -24,6 +24,7 @@ interface Meeting {
 }
 
 export default function CustomerDashboardPage() {
+  if (typeof window === 'undefined') return null;
   const router = useRouter()
   const { user } = useUser()
   const [meetings, setMeetings] = useState<Meeting[]>([
@@ -41,30 +42,11 @@ export default function CustomerDashboardPage() {
 
   if (!user) {
     router.push('/login')
-    return null
+    return null;
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#14144B] to-[#0A0A2A] text-white">
-      {/* <header className="bg-white/10 backdrop-blur-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <Image
-            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/hiipitch-nSS262YxQ47CjsI2Du1QfvET8Ik6l6.png"
-            alt="hiipitch logo"
-            width={100}
-            height={40}
-            unoptimized
-          />
-          <Button 
-            onClick={() => router.push('/login')} 
-            variant="outline"
-            className="text-white border-white hover:bg-white hover:text-[#14144B]"
-          >
-            Logout
-          </Button>
-        </div>
-      </header> */}
-
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <motion.h1
           initial="hidden"

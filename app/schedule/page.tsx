@@ -1,56 +1,66 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Calendar } from '@/components/ui/calendar'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { toast } from '@/components/ui/use-toast'
-import { PageTransition } from '../components/page-transition'
-import { motion, AnimatePresence } from 'framer-motion'
-import { CheckCircle } from 'lucide-react'
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useToast } from "@/app/contexts/toast-context";
+import { PageTransition } from "../components/page-transition";
+import { motion, AnimatePresence } from "framer-motion";
+import { CheckCircle } from "lucide-react";
 
 export default function SchedulePage() {
-  const router = useRouter()
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
-  const [selectedTime, setSelectedTime] = useState<string | undefined>(undefined)
-  const [isScheduled, setIsScheduled] = useState(false)
+  const router = useRouter();
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [selectedTime, setSelectedTime] = useState<string | undefined>(
+    undefined
+  );
+  const [isScheduled, setIsScheduled] = useState(false);
+  const { showToast } = useToast();
 
   // Mock available time slots
   const availableTimeSlots = [
-    '09:00 AM', '10:00 AM', '11:00 AM',
-    '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM'
-  ]
+    "09:00 AM",
+    "10:00 AM",
+    "11:00 AM",
+    "01:00 PM",
+    "02:00 PM",
+    "03:00 PM",
+    "04:00 PM",
+  ];
 
   const handleScheduleMeeting = () => {
     if (!selectedDate || !selectedTime) {
-      toast({
-        title: "Error",
-        description: "Please select both a date and time.",
-        variant: "destructive",
-      })
-      return
+      showToast("Please select both a date and time.", "error");
+      return;
     }
 
     // Here you would typically make an API call to save the meeting
-    console.log('Scheduling meeting:', {
+    console.log("Scheduling meeting:", {
       date: selectedDate,
-      time: selectedTime
-    })
+      time: selectedTime,
+    });
 
-    setIsScheduled(true)
+    setIsScheduled(true);
 
-    toast({
-      title: "Meeting Scheduled",
-      description: `Your meeting has been scheduled for ${selectedDate.toDateString()} at ${selectedTime}.`,
-    })
+    showToast(
+      `Your meeting has been scheduled for ${selectedDate.toDateString()} at ${selectedTime}.`,
+      "success"
+    );
 
     // Redirect to dashboard after a short delay
     setTimeout(() => {
-      router.push('/dashboard')
-    }, 2000)
-  }
+      router.push("/dashboard");
+    }, 2000);
+  };
 
   return (
     <PageTransition>
@@ -60,13 +70,17 @@ export default function SchedulePage() {
             {!isScheduled ? (
               <Card key="schedule-form">
                 <CardContent className="p-6">
-                  <h2 className="text-2xl font-bold text-[#14144B] mb-6">Schedule a Meeting</h2>
+                  <h2 className="text-2xl font-bold text-[#14144B] mb-6">
+                    Schedule a Meeting
+                  </h2>
                   <div className="space-y-6">
                     <div>
-                      <h3 className="text-lg font-medium text-[#14144B] mb-2">Select a Date</h3>
+                      <h3 className="text-lg font-medium text-[#14144B] mb-2">
+                        Select a Date
+                      </h3>
                       <div className="w-full flex justify-center items-center">
                         <Calendar
-                          mode="single"
+                          // mode="single"
                           selected={selectedDate}
                           onSelect={setSelectedDate}
                           className="rounded-md flex justify-center items-center  border w-full [&_.rdp]:w-full [&_.rdp-table]:w-full [&_.rdp-caption]:w-full [&_.rdp-cell]:w-[14.28%] [&_.rdp-head_th]:w-[14.28%]"
@@ -74,7 +88,9 @@ export default function SchedulePage() {
                       </div>
                     </div>
                     <div>
-                      <h3 className="text-lg font-medium text-[#14144B] mb-2">Select a Time</h3>
+                      <h3 className="text-lg font-medium text-[#14144B] mb-2">
+                        Select a Time
+                      </h3>
                       <Select onValueChange={setSelectedTime}>
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select a time slot" />
@@ -108,7 +124,7 @@ export default function SchedulePage() {
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+                  transition={{ type: "spring", stiffness: 260, damping: 20 }}
                 >
                   <CheckCircle className="w-24 h-24 text-green-500" />
                 </motion.div>
@@ -134,6 +150,5 @@ export default function SchedulePage() {
         </div>
       </div>
     </PageTransition>
-  )
+  );
 }
-

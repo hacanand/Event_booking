@@ -16,27 +16,8 @@ const fadeIn = {
 
 export default function SignUpPage() {
   const [role, setRole] = useState<'salesperson' | 'customer'>('customer')
-  const router = useRouter()
-
-  const handleComplete = async (createdUser: any) => {
-    try {
-      // Update the user's metadata with their role
-      await createdUser.update({
-        publicMetadata: { role: role }
-      });
-
-      // Redirect based on the selected role
-      if (role === 'salesperson') {
-        router.push('/onboarding')
-      } else {
-        router.push('/customer-dashboard')
-      }
-    } catch (error) {
-      console.error("Error updating user metadata:", error);
-      // Handle the error (e.g., show an error message to the user)
-    }
-  }
-
+  const router = useRouter();
+ 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#14144B] to-[#0A0A2A] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
       <motion.div
@@ -70,46 +51,52 @@ export default function SignUpPage() {
             <div className="mb-6">
               <RadioGroup
                 value={role}
-                onValueChange={(value: 'salesperson' | 'customer') => setRole(value)}
+                onValueChange={(value: "salesperson" | "customer") =>
+                  setRole(value)
+                }
                 className="flex justify-center space-x-4"
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="salesperson" id="salesperson" />
-                  <Label htmlFor="salesperson" className="text-white">Salesperson</Label>
+                  <Label htmlFor="salesperson" className="text-white">
+                    Salesperson
+                  </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="customer" id="customer" />
-                  <Label htmlFor="customer" className="text-white">Customer</Label>
+                  <Label htmlFor="customer" className="text-white">
+                    Customer
+                  </Label>
                 </div>
               </RadioGroup>
             </div>
             <SignUp
               path="/sign-up"
               routing="path"
-              signInUrl="/login"
-              afterSignUpUrl="/dashboard"
-              redirectUrl={role === 'salesperson' ? '/onboarding' : '/customer-dashboard'}
+              signInUrl="/sing-in"
+              // onComplete={handleComplete}
+              
+              fallbackRedirectUrl={
+                role === "salesperson" ? "/onboarding" : "/customer-dashboard"
+              }
               appearance={{
                 elements: {
-                  formButtonPrimary: 
+                  formButtonPrimary:
                     "bg-[#00FF8C] text-[#14144B] hover:bg-[#00FF8C]/90",
-                  socialButtonsBlockButton: 
+                  socialButtonsBlockButton:
                     "bg-white text-[#14144B] border border-gray-300 hover:bg-gray-50",
-                  socialButtonsBlockButtonText: 
-                    "text-[#14144B] font-semibold",
-                  formFieldInput: 
+                  socialButtonsBlockButtonText: "text-[#14144B] font-semibold",
+                  formFieldInput:
                     "bg-white/5 border-gray-300 text-white placeholder-gray-400",
-                  formFieldLabel: 
-                    "text-white",
-                  footerActionLink: 
-                    "text-[#00FF8C] hover:text-[#00FF8C]/90",
-                }
+                  formFieldLabel: "text-white",
+                  footerActionLink: "text-[#00FF8C] hover:text-[#00FF8C]/90",
+                },
               }}
             />
           </CardContent>
         </Card>
       </motion.div>
     </div>
-  )
+  );
 }
 

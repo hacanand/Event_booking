@@ -79,11 +79,11 @@ export default function LoginPage() {
               </RadioGroup>
             </div>
             <SignIn
-              path="/login"
+              path="/sign-in"
               routing="path"
               signUpUrl="/sign-up"
-              afterSignInUrl="/dashboard"
-              afterSignIn={handleAfterSignIn}
+              fallbackRedirectUrl="/dashboard"
+              // afterSignIn={handleAfterSignIn}
               appearance={{
                 elements: {
                   formButtonPrimary: 

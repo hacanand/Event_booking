@@ -47,7 +47,7 @@ export default function Navbar() {
                     Book Meeting
                   </Link>
                 )}
-                <UserButton afterSignOutUrl="/" />
+                <UserButton />
               </>
             ) : (
               <>
@@ -55,7 +55,7 @@ export default function Navbar() {
                   asChild
                   className="bg-green-500 text-white hover:bg-green-600 font-medium"
                 >
-                  <Link href="/login">Login</Link>
+                  <Link href="/sing-in">Login</Link>
                 </Button>
                 <Button asChild variant="outline" className="font-medium">
                   <Link href="/sign-up">Sign Up</Link>

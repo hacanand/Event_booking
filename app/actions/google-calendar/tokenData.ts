@@ -84,7 +84,12 @@ export async function getGoogleToken({
 }
 
 // Server Action to get the Calendly token using clerkId
-export async function getCalendlyToken({ clerkId }: { clerkId: string }) {
+
+
+//if calendly is logged in or not
+
+
+export async function isGoggleCalLoggedIn({ clerkId }: { clerkId: string }) {
   if (!clerkId) {
     throw new Error("clerkId is required.");
   }
@@ -93,14 +98,14 @@ export async function getCalendlyToken({ clerkId }: { clerkId: string }) {
     // Find the token document by clerkId
     const tokenDocument = await Token.findOne({ clerkId });
 
-    if (!tokenDocument) {
+    if (!tokenDocument?.googleToken) {
       throw new Error("Token document not found.");
     }
-
-    // Return the Calendly token
-    return { calendlyRefreshToken: tokenDocument.calendlyRefreshToken };
+    return true;
   } catch (error) {
     console.error(error);
-    throw new Error("An error occurred while fetching the Calendly token.");
+    return false;
   }
 }
+
+ 

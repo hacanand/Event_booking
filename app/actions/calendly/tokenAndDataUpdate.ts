@@ -1,5 +1,6 @@
 'use server'
 
+import Token from "@/models/tokenModel";
 import axios, { AxiosInstance } from "axios";
 // Create a pre-configured Axios instance
 const calendlyApiClient: AxiosInstance = axios.create({
@@ -84,3 +85,45 @@ const updateUserData = async (
     throw new Error("Failed to update user data.");
   }
 };
+
+
+export async function getCalendlyToken({ clerkId }: { clerkId: string }) {
+  if (!clerkId) {
+    throw new Error("clerkId is required.");
+  }
+
+  try {
+    // Find the token document by clerkId
+    const tokenDocument = await Token.findOne({ clerkId });
+
+    if (!tokenDocument) {
+      throw new Error("Token document not found.");
+    }
+
+    // Return the Calendly token
+    return { calendlyRefreshToken: tokenDocument.calendlyRefreshToken };
+  } catch (error) {
+    console.error(error);
+    throw new Error("An error occurred while fetching the Calendly token.");
+  }
+}
+
+ export async function isCalendlyLoggedIn({ clerkId }: { clerkId: string }) {
+   if (!clerkId) {
+     throw new Error("clerkId is required.");
+   }
+
+   try {
+     // Find the token document by clerkId
+     const tokenDocument = await Token.findOne({ clerkId });
+
+     if (!tokenDocument?.calendlyRefreshToken) {
+       throw new Error("Token document not found.");
+     }
+     return true;
+   } catch (error) {
+     console.error(error);
+     return false;
+   }
+ }
+    
