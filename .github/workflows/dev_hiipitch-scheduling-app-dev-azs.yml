@@ -1,4 +1,4 @@
-name: Build and Deploy Next.js App with Warnings
+name: Build and Deploy Next.js App with Compression
 
 on:
   push:
@@ -34,16 +34,19 @@ jobs:
       - name: Prune Node Modules
         run: npm prune --production
 
-      # Save deployment package as artifact
+      # Compress the deployment package
+      - name: Create Deployment Archive
+        run: |
+          mkdir -p deployment-package
+          cp -r .next node_modules package.json public deployment-package/
+          tar -czf deployment-package.tar.gz deployment-package
+
+      # Upload the compressed artifact
       - name: Upload Deployment Artifact
         uses: actions/upload-artifact@v3
         with:
           name: deployment-package
-          path: |
-            .next
-            node_modules
-            package.json
-            public
+          path: deployment-package.tar.gz
 
       # Deploy the artifact to Azure Web App
       - name: Deploy to Azure Web App
@@ -51,4 +54,4 @@ jobs:
         with:
           app-name: 'hiipitch-scheduling-app-dev-azs'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_4385ACEF9DF8458AA19B97ACE948ED13 }}
-          package: deployment-package
+          package: deployment-package.tar.gz
