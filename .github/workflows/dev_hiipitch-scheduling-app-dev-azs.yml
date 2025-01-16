@@ -1,4 +1,4 @@
-name: Build and Deploy Next.js App with Optimizations
+name: Build and Deploy Next.js App with Artifacts
 
 on:
   push:
@@ -14,43 +14,41 @@ jobs:
       # Checkout the repository
       - uses: actions/checkout@v4
 
-      # Set up Node.js with caching
+      # Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20.x'
           cache: 'npm'
 
-      # Install dependencies and build
+      # Install dependencies and build the app
       - name: Install Dependencies and Build
         env:
           MONGO_URI: ${{ secrets.MONGO_URI }}
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.CLERK_PUBLISHABLE_KEY }}
         run: |
-          npm ci --only=production
-          npm run build || echo "Build completed with warnings"
+          npm ci --omit=dev
+          npm run build
 
-      # Cache `.next` directory to speed up subsequent builds
-      - name: Cache `.next`
-        uses: actions/cache@v3
+      # Prune unnecessary dependencies
+      - name: Prune Node Modules
+        run: npm prune --production
+
+      # Save deployment package as artifact
+      - name: Upload Deployment Artifact
+        uses: actions/upload-artifact@v3
         with:
-          path: .next
-          key: ${{ runner.os }}-next-cache
-          restore-keys: |
-            ${{ runner.os }}-next-cache
+          name: deployment-package
+          path: |
+            .next
+            node_modules
+            package.json
+            public
 
-      # Package the necessary files into a zip
-      - name: Create Deployment Zip
-        run: |
-          mkdir -p deployment-package
-          cp -r .next node_modules package.json public deployment-package
-          cd deployment-package
-          zip -r ../deployment-package.zip .
-
-      # Deploy the zip package to Azure Web App
+      # Deploy the artifact to Azure Web App
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'hiipitch-scheduling-app-dev-azs'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_4385ACEF9DF8458AA19B97ACE948ED13 }}
-          package: deployment-package.zip
+          package: deployment-package
