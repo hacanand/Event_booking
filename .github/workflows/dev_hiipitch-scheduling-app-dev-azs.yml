@@ -1,4 +1,4 @@
-name: Build and Deploy Next.js App with ZIP Compression
+name: Build and Deploy Next.js App
 
 on:
   push:
@@ -11,17 +11,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the repository
       - uses: actions/checkout@v4
 
-      # Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20.x'
           cache: 'npm'
 
-      # Install dependencies and build the app
       - name: Install Dependencies and Build
         env:
           MONGO_URI: ${{ secrets.MONGO_URI }}
@@ -30,25 +27,22 @@ jobs:
           npm ci --omit=dev
           npm run build || (echo "Build completed with warnings" && true)
 
-      # Prune unnecessary dependencies
       - name: Prune Node Modules
         run: npm prune --production
 
-      # Compress the deployment package as ZIP
       - name: Create Deployment Archive
         run: |
           mkdir -p deployment-package
-          cp -r .next node_modules package.json public deployment-package/
-          zip -r deployment-package.zip deployment-package
+          cp -r .next package.json public deployment-package/
+          rm -rf deployment-package/.next/cache
+          zip -r -9 deployment-package.zip deployment-package
 
-      # Upload the compressed artifact
       - name: Upload Deployment Artifact
         uses: actions/upload-artifact@v3
         with:
           name: deployment-package
           path: deployment-package.zip
 
-      # Deploy the ZIP artifact to Azure Web App
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
