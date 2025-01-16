@@ -3,12 +3,12 @@ import mongoose, { Document, Schema, Model } from "mongoose";
 interface IUser extends Document {
   clerkId: string; // Simplified type definitions for better readability
   userType: string;
-  schedulesEventUrl?: string;
+  userStatus?: "verified" | "unverified";
+  scheduledEventUrls?: Array<string>;
   email: string;
   firstName?: string;
   lastName?: string;
   profilePicture?: string;
-  calendlyUserUrl?: string;
 }
 
 // Define the schema for the User model
@@ -23,9 +23,13 @@ const userSchema: Schema<IUser> = new Schema(
       type: String,
       required: true,
     },
-    schedulesEventUrl: {
+    userStatus: {
       type: String,
-      default: null,
+      default: "unverified",
+    },
+    scheduledEventUrls: {
+      type: [String],
+      default: [],
     },
     email: {
       type: String,

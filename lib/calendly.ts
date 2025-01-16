@@ -32,10 +32,10 @@ export const refreshAccessToken = async (refreshToken: string) => {
     refresh_token: refreshToken,
   });
 
-  return response.data; // Contains new access_token, refresh_token, and expires_in
+  return response?.data; // Contains new access_token, refresh_token, and expires_in
 };
 
-export const saveCalendlyUserAndUrlData = async (userId:string,accessToken: string) => {
+export const saveCalendlyUserAndUrlData = async (userId: string, accessToken: string) => {
   const response = await axios.get("https://api.calendly.com/users/me", {
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -43,13 +43,13 @@ export const saveCalendlyUserAndUrlData = async (userId:string,accessToken: stri
   });
   const uri = response.data.resource.uri;
   const eventTypes = await getCalendlyEventTypes(uri, accessToken);
-  // console.log(eventTypes);
-  const scheduled_url = eventTypes.collection[0]?.scheduling_url;
+  const scheduledEventUrls = eventTypes?.collection.map(
+    (event: any) => event.scheduling_url
+  );
   await axiosInstance.put(`/api/users/${userId}`, {
-    schedulesEventUrl: scheduled_url,
-    calendlyUserUrl: uri,
+    scheduledEventUrls: scheduledEventUrls,
   });
-  return response.data; 
+  return response.data;
 };
 
 export async function getCalendlyEventTypes(uri: string, accessToken: string) {

@@ -3,17 +3,22 @@ import { getCalendlyAuthUrl } from "@/lib/calendly";
 import { Button } from "../../components/ui/button";
 import { Card } from "../../components/ui/card";
 import   {   redirect, useRouter } from "next/navigation";
-// import { getGoogleAuthUrl } from "@/lib/google";
+import { getGoogleAuthUrl } from "@/lib/google";
 import Link from "next/link";
 
-// interface CalendarConnectProps {
-//   onComplete: () => void;
-// }
+ 
+interface CalendarConnectProps {
+  calendlyAuthUrl: string;
+  googleAuthUrl: string;
+}
 
-export function CalendarConnect() {
-  const calendlyAuthUrl = getCalendlyAuthUrl();
-  // const googleAuthUrl = getGoogleAuthUrl();
-  const router=useRouter();
+
+export function CalendarConnect({
+  calendlyAuthUrl,
+  googleAuthUrl,
+}: CalendarConnectProps) {
+   
+  const router = useRouter();
   return (
     <div className="space-y-6">
       <div className="text-center">
@@ -32,7 +37,7 @@ export function CalendarConnect() {
             className="w-full"
             onClick={() => {
               // Add Calendly integration logic here
-            router.push(calendlyAuthUrl);
+              router.push(calendlyAuthUrl);
             }}
           >
             Connect with Calendly
@@ -43,7 +48,11 @@ export function CalendarConnect() {
           <Button
             variant="outline"
             className="w-full"
-            
+            onClick={  () => {
+              // Add Google Calendar integration logic here
+              router.push(  googleAuthUrl);
+              // redirect(calendlyAuthUrl);
+            }}
           >
             Connect with Google Calendar
           </Button>

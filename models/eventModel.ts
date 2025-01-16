@@ -10,16 +10,7 @@ export interface IEvent extends Document {
   endTime: string;
   eventStatus: string;
   eventUri: string;
-  googleCalendarEventId: string | null; // New field for Google Calendar Event ID
-  invitee: {
-    name: string | null;
-    email: string;
-    status: string;
-    uri: string;
-  };
-  cancelUrl: string;
-  rescheduleUrl: string;
-  rescheduled: boolean;
+  googleCalendarEventId: string | null; 
   timezone: string;
   createdAt: string;
   updatedAt: string;
@@ -36,15 +27,6 @@ const EventSchema: Schema = new Schema(
     eventStatus: { type: String, required: true },
     eventUri: { type: String, required: true },
     googleCalendarEventId: { type: String, default: null }, // New field added
-    invitee: {
-      name: { type: String, default: null },
-      email: { type: String, required: true },
-      status: { type: String, required: true },
-      uri: { type: String, required: true },
-    },
-    cancelUrl: { type: String, required: true },
-    rescheduleUrl: { type: String, required: true },
-    rescheduled: { type: Boolean, required: true },
     timezone: { type: String, required: true },
     createdAt: { type: String, required: true },
     updatedAt: { type: String, required: true },

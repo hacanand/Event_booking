@@ -2,8 +2,7 @@ import { getGoogleAuthClient } from "@/lib/google";
 import { routeChange } from "@/app/actions/redirect"; // Assume this is the server-side `redirect` function
 import { clerkClient, currentUser } from "@clerk/nextjs/server";
 import axiosInstance from "@/app/utils/axiosInstance";
-import { updateUserToken } from "@/app/actions/google-calendar/token";
- 
+import { updateGoogleCalendarToken } from "@/app/actions/google-calendar/tokenData";
 
 export default async function CallbackPage({
   searchParams,
@@ -17,7 +16,7 @@ export default async function CallbackPage({
   }
 
   const client = await getGoogleAuthClient();
-  const clerk_client= await clerkClient();
+  const clerk_client = await clerkClient();
   try {
     const response = await client.getToken(code);
     const tokens = response?.tokens;
@@ -32,15 +31,9 @@ export default async function CallbackPage({
         refresh_token: tokens.refresh_token,
       });
       // console.log(resp);
-      const user = await currentUser()
-      const user_id = user?.id;
-      await updateUserToken(user_id!, tokens);
-      await clerk_client.users.updateUserMetadata(user_id!, {
-        publicMetadata: {
-        tokens: tokens,
-        }
-      });
-      // return routeChange("/");
+      const user = await currentUser();
+      await updateGoogleCalendarToken(user?.id!, tokens?.refresh_token!);
+      return <p>Google Calendar cookies set</p>;
     } catch (error) {
       console.error("Error setting cookies:", error);
       return <p>Failed to set cookies. Please try again.</p>;
@@ -49,5 +42,4 @@ export default async function CallbackPage({
     console.error("Error fetching tokens:", error);
     return <p>Failed to fetch tokens. Please try again.</p>;
   }
-  
 }
