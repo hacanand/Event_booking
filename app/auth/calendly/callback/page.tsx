@@ -4,7 +4,7 @@ import {
   saveCalendlyUserAndUrlData,
 } from "@/lib/calendly";
 import { currentUser } from "@clerk/nextjs/server";
-import { createToken } from "@/app/actions/token/tokenData";
+import { createToken } from "@/app/actions/google-calendar/tokenData";
 import axiosInstance from "@/app/utils/axiosInstance";
 // import { redirect } from "next/navigation";
 
@@ -46,7 +46,7 @@ export default async function CallbackPage({
       return <p>User ID not found.</p>;
     }
     console.timeEnd("calendly-auth");
-    
+
     return <p>calendly cookies set</p>;
 
     // redirect("/?calendly-auth=success");

@@ -10,8 +10,8 @@ import Token from "@/models/tokenModel";
    try {
      // Connect to the database
      //get cookies from the request
-     const cookies = req.cookies;
-      console.log(cookies);
+    //  const cookies = req.cookies;
+    //   console.log(cookies);
     //  console.log(res);
      if (mongoose.connection.readyState === 0) {
        await mongoose.connect(process.env.MONGO_URI || "");

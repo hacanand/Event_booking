@@ -11,13 +11,13 @@ import axios from "axios";
 
 // Create and configure Axios instance
 const axiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000", // Base URL for all requests
   timeout: 10000, // Set a timeout (10 seconds)
   withCredentials: true, // Send cookies with requests
   headers: {
     "Content-Type": "application/json", // Default content type
     Accept: "application/json", // Accept JSON responses
   },
+  baseURL: process.env.NEXT_PUBLIC_BASE_URL || `http://localhost:${process.env.PORT || 3000}`,
 });
 
 // Add a request interceptor
