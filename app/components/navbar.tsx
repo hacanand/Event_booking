@@ -11,8 +11,8 @@ export default function Navbar() {
   const router = useRouter()
 
   return (
-    <nav className="sticky top-0 z-10 border-b bg-white shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav className="sticky top-0 z-10 bg-indigo-800 backdrop-blur-xl shadow-md">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
         <div className="flex justify-between h-16 items-center">
           <Link href="/" className="relative flex items-center">
             <Image
@@ -25,20 +25,24 @@ export default function Navbar() {
               unoptimized
             />
           </Link>
-          
+
           <div className="flex items-center gap-6">
             {isSignedIn ? (
               <>
-                <Link 
-                  href={user.publicMetadata.role === 'salesperson' ? '/salesperson-dashboard' : '/customer-dashboard'}
-                  className="text-[#14144B] hover:text-[#00FF8C]"
+                <Link
+                  href={
+                    user.publicMetadata.role === "salesperson"
+                      ? "/salesperson-dashboard"
+                      : "/customer-dashboard"
+                  }
+                  className="text-white hover:text-green-500 font-medium"
                 >
                   Dashboard
                 </Link>
-                {user.publicMetadata.role === 'customer' && (
-                  <Link 
+                {user.publicMetadata.role === "customer" && (
+                  <Link
                     href="/customer/book-slot"
-                    className="text-[#14144B] hover:text-[#00FF8C]"
+                    className="text-gray-800 hover:text-green-500 font-medium"
                   >
                     Book Meeting
                   </Link>
@@ -47,10 +51,13 @@ export default function Navbar() {
               </>
             ) : (
               <>
-                <Button asChild className="bg-[#00FF8C] text-[#14144B] hover:bg-[#00FF8C]/90">
+                <Button
+                  asChild
+                  className="bg-green-500 text-white hover:bg-green-600 font-medium"
+                >
                   <Link href="/login">Login</Link>
                 </Button>
-                <Button asChild variant="outline">
+                <Button asChild variant="outline" className="font-medium">
                   <Link href="/sign-up">Sign Up</Link>
                 </Button>
               </>
@@ -59,6 +66,6 @@ export default function Navbar() {
         </div>
       </div>
     </nav>
-  )
+  );
 }
 

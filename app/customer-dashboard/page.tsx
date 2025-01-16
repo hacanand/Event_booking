@@ -46,7 +46,7 @@ export default function CustomerDashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#14144B] to-[#0A0A2A] text-white">
-      <header className="bg-white/10 backdrop-blur-lg">
+      {/* <header className="bg-white/10 backdrop-blur-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <Image
             src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/hiipitch-nSS262YxQ47CjsI2Du1QfvET8Ik6l6.png"
@@ -63,7 +63,7 @@ export default function CustomerDashboardPage() {
             Logout
           </Button>
         </div>
-      </header>
+      </header> */}
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <motion.h1
@@ -170,7 +170,6 @@ export default function CustomerDashboardPage() {
               </CardHeader>
               <CardContent>
                 <Calendar
-                  mode="single"
                   selected={new Date()}
                   className="rounded-md border-none bg-transparent text-white"
                 />
