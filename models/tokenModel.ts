@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { unique } from "next/dist/build/utils";
-
+import { Credentials } from "google-auth-library";
 interface IToken extends Document {
   clerkId: string;
   calendlyRefreshToken: string;
@@ -8,12 +8,23 @@ interface IToken extends Document {
   updatedAt: Date;
 }
 
+interface googleCredType extends Credentials {
+  access_token: string;
+  refresh_token: string;
+  scope: string;
+  token_type: string;
+  expiry_date: number;
+}
 // Main Token Schema
 const TokenSchema: Schema = new Schema(
   {
     clerkId: { type: String, required: true, unique: true }, // Clerk ID for user identification
     calendlyRefreshToken: { type: String, required: true, default: null },
-    googleCalendarRefreshToken: { type: String, default: null },
+    googleCalendarRefreshToken: {
+      type: String,
+      required: true,
+      default: null,
+    },
     updatedAt: { type: Date, default: Date.now }, // Automatically store the last update time
   },
   {

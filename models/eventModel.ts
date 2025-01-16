@@ -1,5 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 import axios from "axios";
+import axiosInstance from "@/app/utils/axiosInstance";
 
 // Define the interface for the schema
 export interface IEvent extends Document {
@@ -39,11 +40,9 @@ const EventSchema: Schema = new Schema(
 // Post-save middleware to fetch Google Calendar Event ID
 EventSchema.post("save", async function (doc: IEvent) {
   try {
-    // Retrieve the token from the Token schema
-    const Token = mongoose.model("Token"); // Assuming Token schema is defined elsewhere
-    const tokenDoc = await Token.findOne(); // Retrieve the token document
-    const token = tokenDoc?.token; // Assuming token field is stored as `token`
-
+    
+    const res = await axiosInstance.put('/api/auth/calendly/refresh-token');
+    const token = res.data.data.accessToken;
     if (!token) {
       console.error("Google Calendar API token not found");
       return;
@@ -62,7 +61,8 @@ EventSchema.post("save", async function (doc: IEvent) {
     };
 
     const response = await axios.request(options);
-    const googleCalendarEventId = response.data.resource.google_event_id; // Replace with correct key from API response
+    const googleCalendarEventId =
+      response.data.resource.calendar_event.external_id; // Replace with correct key from API response
 
     if (googleCalendarEventId) {
       // Update the document in MongoDB
