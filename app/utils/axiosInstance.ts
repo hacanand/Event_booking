@@ -18,6 +18,7 @@ const axiosInstance = axios.create({
     Accept: "application/json", // Accept JSON responses
   },
   baseURL: process.env.NEXT_PUBLIC_BASE_URL || `http://localhost:${process.env.PORT || 3000}`,
+  // baseURL: `http://localhost:${process.env.PORT || 8080}`,
 });
 
 // Add a request interceptor
