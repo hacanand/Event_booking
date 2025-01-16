@@ -1,7 +1,6 @@
 "use server";
-
 import Token from "@/models/tokenModel";
-
+import { Credentials } from "google-auth-library";
 export async function createToken(clerkId: string, calendlyRefreshToken:string) {
   if (!clerkId || !calendlyRefreshToken) {
     throw new Error("clerkId and calendlyToken are required.");
@@ -25,8 +24,8 @@ export async function createToken(clerkId: string, calendlyRefreshToken:string) 
 }
 
 // Server Action to update the Google Calendar token using clerkId
-export async function updateGoogleCalendarToken(clerkId: string, googleCalendarRefreshToken: string) {
-  if (!clerkId || !googleCalendarRefreshToken) {
+export async function updateGoogleCalendarToken(clerkId: string, googleToken: Credentials) {
+  if (!clerkId || !googleToken) {
     throw new Error("clerkId and google Calendar RefreshToken are required.");
   }
 
@@ -34,7 +33,7 @@ export async function updateGoogleCalendarToken(clerkId: string, googleCalendarR
     // Find the token document by clerkId and update the Google Calendar token
     const updatedToken = await Token.findOneAndUpdate(
       { clerkId },
-      { googleCalendarRefreshToken, updatedAt: new Date() }, // Update Google Calendar token and set updatedAt to current time
+      { googleToken, updatedAt: new Date() }, // Update Google Calendar token and set updatedAt to current time
       { new: true, runValidators: true } // Return the updated document
     );
 
@@ -55,7 +54,7 @@ export async function updateGoogleCalendarToken(clerkId: string, googleCalendarR
   }
 }
 
-export async function getGoogleCalendarRefreshToken({
+export async function getGoogleToken({
   clerkId,
 }: {
   clerkId: string;
@@ -74,7 +73,7 @@ export async function getGoogleCalendarRefreshToken({
 
     // Return the Google Calendar token
     return {
-      googleCalendarRefreshToken: tokenDocument.googleCalendarRefreshToken,
+      googleToken: tokenDocument.googleToken,
     };
   } catch (error) {
     console.error(error);
@@ -99,7 +98,7 @@ export async function getCalendlyToken({ clerkId }: { clerkId: string }) {
     }
 
     // Return the Calendly token
-    return { calendlyToken: tokenDocument.calendlyToken };
+    return { calendlyRefreshToken: tokenDocument.calendlyRefreshToken };
   } catch (error) {
     console.error(error);
     throw new Error("An error occurred while fetching the Calendly token.");

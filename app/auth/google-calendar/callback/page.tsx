@@ -32,7 +32,7 @@ export default async function CallbackPage({
       });
       // console.log(resp);
       const user = await currentUser();
-      await updateGoogleCalendarToken(user?.id!, tokens?.refresh_token!);
+      await updateGoogleCalendarToken(user?.id!, tokens);
       return <p>Google Calendar cookies set</p>;
     } catch (error) {
       console.error("Error setting cookies:", error);

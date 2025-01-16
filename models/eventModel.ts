@@ -59,7 +59,7 @@ EventSchema.post("save", async function (doc: IEvent) {
         Authorization: `Bearer ${token}`,
       },
     };
-
+    
     const response = await axios.request(options);
     const googleCalendarEventId =
       response.data.resource.calendar_event.external_id; // Replace with correct key from API response
