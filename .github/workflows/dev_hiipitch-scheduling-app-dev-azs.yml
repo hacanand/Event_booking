@@ -1,4 +1,4 @@
-name: Build and Deploy Next.js App with Compression
+name: Build and Deploy Next.js App with ZIP Compression
 
 on:
   push:
@@ -34,24 +34,24 @@ jobs:
       - name: Prune Node Modules
         run: npm prune --production
 
-      # Compress the deployment package
+      # Compress the deployment package as ZIP
       - name: Create Deployment Archive
         run: |
           mkdir -p deployment-package
           cp -r .next node_modules package.json public deployment-package/
-          tar -czf deployment-package.tar.gz deployment-package
+          zip -r deployment-package.zip deployment-package
 
       # Upload the compressed artifact
       - name: Upload Deployment Artifact
         uses: actions/upload-artifact@v3
         with:
           name: deployment-package
-          path: deployment-package.tar.gz
+          path: deployment-package.zip
 
-      # Deploy the artifact to Azure Web App
+      # Deploy the ZIP artifact to Azure Web App
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'hiipitch-scheduling-app-dev-azs'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_4385ACEF9DF8458AA19B97ACE948ED13 }}
-          package: deployment-package.tar.gz
+          package: deployment-package.zip
