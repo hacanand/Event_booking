@@ -7,7 +7,7 @@ import { motion } from "framer-motion"
 import { Card, CardContent } from "@/components/ui/card"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
-import { useRouter } from 'next/navigation'
+// import { useRouter } from 'next/navigation'
 
 const fadeIn = {
   hidden: { opacity: 0, y: -20 },
@@ -16,22 +16,7 @@ const fadeIn = {
 
 export default function LoginPage() {
   const [role, setRole] = useState<'salesperson' | 'customer'>('customer')
-  const router = useRouter()
-
-  const handleAfterSignIn = (userData: any) => {
-    // Set the user's role in Clerk's public metadata
-    userData.user.update({
-      publicMetadata: { role: role }
-    }).then(() => {
-      // Redirect based on the selected role
-      if (role === 'salesperson') {
-        router.push('/salesperson-dashboard')
-      } else {
-        router.push('/customer-dashboard')
-      }
-    })
-  }
-
+  localStorage.setItem('role', role);
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#14144B] to-[#0A0A2A] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
       <motion.div 
@@ -60,20 +45,21 @@ export default function LoginPage() {
         variants={fadeIn}
         transition={{ delay: 0.2 }}
       >
-        <Card className="bg-white/10 backdrop-blur-lg">
+        <Card className="bg-white/15 backdrop-blur-lg">
           <CardContent className="pt-6">
-            <div className="mb-6">
+            <div className="mb-6 ">
               <RadioGroup
                 value={role}
                 onValueChange={(value: 'salesperson' | 'customer') => setRole(value)}
-                className="flex justify-center space-x-4"
+                className="flex justify-center space-x-4  "
               >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="salesperson" id="salesperson" />
-                  <Label htmlFor="salesperson" className="text-white">Salesperson</Label>
+                
+                <div className="flex items-center space-x-2  ">
+                  <RadioGroupItem value="salesperson" id="salesperson"  />
+                  <Label htmlFor="salesperson" className="text-white ">Salesperson</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="customer" id="customer" />
+                  <RadioGroupItem value="customer" id="customer"  />
                   <Label htmlFor="customer" className="text-white">Customer</Label>
                 </div>
               </RadioGroup>
@@ -81,9 +67,7 @@ export default function LoginPage() {
             <SignIn
               path="/sign-in"
               routing="path"
-              signUpUrl="/sign-up"
               fallbackRedirectUrl="/dashboard"
-              // afterSignIn={handleAfterSignIn}
               appearance={{
                 elements: {
                   formButtonPrimary: 

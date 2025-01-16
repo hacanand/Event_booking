@@ -1,14 +1,14 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
-import Image from 'next/image'
-import { Button } from '@/components/ui/button'
-import { useUser, UserButton } from "@clerk/nextjs"
-import { useRouter } from 'next/navigation'
+import Link from "next/link";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { useUser, UserButton } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
-  const { user, isSignedIn } = useUser()
-  const router = useRouter()
+  const { user, isSignedIn } = useUser();
+  const router = useRouter();
 
   return (
     <nav className="sticky top-0 z-10 bg-indigo-800 backdrop-blur-xl shadow-md">
@@ -51,15 +51,9 @@ export default function Navbar() {
               </>
             ) : (
               <>
-                <Button
-                  asChild
-                  className="bg-green-500 text-white hover:bg-green-600 font-medium"
-                >
-                  <Link href="/sing-in">Login</Link>
-                </Button>
-                <Button asChild variant="outline" className="font-medium">
-                  <Link href="/sign-up">Sign Up</Link>
-                </Button>
+                <div className="flex items-center gap-4 text-xl font-bold bg-gradient-to-r from-[#FF00A6] to-[#FF7D00] px-4 py-2  text-transparent bg-clip-text">
+                  Hi there! Please sign in to continue...
+                </div>
               </>
             )}
           </div>
@@ -68,4 +62,3 @@ export default function Navbar() {
     </nav>
   );
 }
-
