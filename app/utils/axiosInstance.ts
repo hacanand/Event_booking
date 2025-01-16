@@ -17,7 +17,7 @@ const axiosInstance = axios.create({
     "Content-Type": "application/json", // Default content type
     Accept: "application/json", // Accept JSON responses
   },
-  baseURL: process.env.NEXT_PUBLIC_BASE_URL || `http://localhost:${process.env.PORT || 3000}`,
+  baseURL: process.env.NEXT_PUBLIC_BASE_URL || `http://localhost:${process.env.PORT || 8080}`, // Fallback to localhost with default port
   // baseURL: `http://localhost:${process.env.PORT || 8080}`,
 });
 
