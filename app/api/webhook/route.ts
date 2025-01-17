@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import Event from "@/models/eventModel";
-import "@/utils/dbConnect"; // Ensure database connection is established
 import { currentUser } from "@clerk/nextjs/server";
 
 export async function POST(req: Request) {

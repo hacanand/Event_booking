@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuth } from '@/app/contexts/auth-context'
+import { useToast } from "@/app/contexts/toast-context";
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Calendar } from '@/components/ui/calendar'
@@ -13,11 +13,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { toast } from '@/components/ui/use-toast'
+import {  useUser } from '@clerk/nextjs';
+ 
+ 
 
 export default function SchedulePage({ params }: { params: { salesId: string } }) {
   const router = useRouter()
-  const { user } = useAuth()
+  const { user } = useUser()
+  const { showToast } = useToast();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
   const [selectedTime, setSelectedTime] = useState<string | undefined>(undefined)
 
@@ -29,11 +32,7 @@ export default function SchedulePage({ params }: { params: { salesId: string } }
 
   const handleScheduleMeeting = () => {
     if (!selectedDate || !selectedTime) {
-      toast({
-        title: "Error",
-        description: "Please select both a date and time.",
-        variant: "destructive",
-      })
+      showToast('Please select both a date and time.', 'error')
       return
     }
 
@@ -45,10 +44,11 @@ export default function SchedulePage({ params }: { params: { salesId: string } }
       time: selectedTime
     })
 
-    toast({
-      title: "Meeting Scheduled",
-      description: `Your meeting has been scheduled for ${selectedDate.toDateString()} at ${selectedTime}.`,
-    })
+    // toast({
+    //   title: "Meeting Scheduled",
+    //   description: `Your meeting has been scheduled for ${selectedDate.toDateString()} at ${selectedTime}.`,
+    // })
+    showToast( `Your meeting has been scheduled for ${selectedDate.toDateString()} at ${selectedTime}.`,'error')
 
     router.push('/dashboard')
   }
@@ -70,7 +70,7 @@ export default function SchedulePage({ params }: { params: { salesId: string } }
           <CardContent className="space-y-6 w-full">
             <div className="w-full flex justify-center">
               <Calendar
-                mode="single"
+                // mode="single"
                 selected={selectedDate}
                 onSelect={setSelectedDate}
                 className="rounded-md border w-full [&_.rdp]:w-full [&_.rdp-table]:w-full [&_.rdp-caption]:w-full [&_.rdp-cell]:w-[14.28%] [&_.rdp-head_th]:w-[14.28%]"
