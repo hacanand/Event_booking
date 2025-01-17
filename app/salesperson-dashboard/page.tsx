@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from "next/image"
 import { motion } from "framer-motion"
@@ -39,32 +39,19 @@ export default function SalespersonDashboardPage() {
     setIsDetailsOpen(true)
   }
 
+  useEffect(() => {
+    if (!user) {
+      router.push('/sign-in')
+    }
+    
+  }, [user, router]);
+
   if (!user) {
-    router.push('/sign-in')
-    return null
+    return null;
   }
 
   return (
     <div className="min-h-screen bg-white text-black">
-      {/* <header className="bg-white/10 backdrop-blur-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <Image
-            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/hiipitch-nSS262YxQ47CjsI2Du1QfvET8Ik6l6.png"
-            alt="hiipitch logo"
-            width={100}
-            height={40}
-            unoptimized
-          />
-          <Button 
-            onClick={() => router.push('/sign-in')} 
-            variant="outline"
-            className="text-white border-white hover:bg-white hover:text-[#14144B]"
-          >
-            Logout
-          </Button>
-        </div>
-      </header> */}
-
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <motion.h1
           initial="hidden"
@@ -82,7 +69,7 @@ export default function SalespersonDashboardPage() {
             variants={fadeIn}
             transition={{ delay: 0.2 }}
           >
-            <Card className="bg-white/10 backdrop-blur-lg border-none h-full">
+            <Card className="bg-white/10 backdrop-blur-lg border-neutral-500 shadow-lg h-full">
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <CalendarIcon2 className="mr-2 text-[#00FF8C]" />
@@ -94,7 +81,9 @@ export default function SalespersonDashboardPage() {
                   <CheckCircle className="mr-2" />
                   <span>Connected</span>
                 </div>
-                <p className="mt-2 text-sm text-gray-300">Your Calendly account is successfully linked.</p>
+                <p className="mt-2 text-sm text-gray-500">
+                  Your Calendly account is successfully linked.
+                </p>
               </CardContent>
             </Card>
           </motion.div>
@@ -105,7 +94,7 @@ export default function SalespersonDashboardPage() {
             variants={fadeIn}
             transition={{ delay: 0.3 }}
           >
-            <Card className="bg-white/10 backdrop-blur-lg border-none h-full">
+            <Card className="bg-white/10 backdrop-blur-lg border-neutral-500 shadow-lg h-full">
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <CalendarIcon className="mr-2 text-[#00FF8C]" />
@@ -117,7 +106,9 @@ export default function SalespersonDashboardPage() {
                   <CheckCircle className="mr-2" />
                   <span>Connected</span>
                 </div>
-                <p className="mt-2 text-sm text-gray-300">Your Google Calendar is successfully synced.</p>
+                <p className="mt-2 text-sm text-gray-500">
+                  Your Google Calendar is successfully synced.
+                </p>
               </CardContent>
             </Card>
           </motion.div>
@@ -128,7 +119,7 @@ export default function SalespersonDashboardPage() {
             variants={fadeIn}
             transition={{ delay: 0.4 }}
           >
-            <Card className="bg-white/10 backdrop-blur-lg border-none h-full">
+            <Card className="bg-white/10 backdrop-blur-lg border-neutral-500 shadow-lg h-full">
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <LinkIcon className="mr-2 text-[#00FF8C]" />
@@ -140,9 +131,14 @@ export default function SalespersonDashboardPage() {
                   <CheckCircle className="mr-2" />
                   <span>Active</span>
                 </div>
-                <p className="mt-2 text-sm text-gray-300">Your booking link is ready to be shared.</p>
-                <Button 
-                  onClick={() => {/* Add copy link functionality */}}
+                <p className="mt-2 text-sm text-gray-500">
+                  Your booking link is ready to be shared.
+                </p>
+                <Button
+                  onClick={() => {
+                    /* Add copy link functionality */
+
+                  }}
                   variant="outline"
                   className="mt-4 text-[#00FF8C] border-[#00FF8C] hover:bg-[#00FF8C] hover:text-[#14144B]"
                 >
@@ -161,13 +157,13 @@ export default function SalespersonDashboardPage() {
             transition={{ delay: 0.5 }}
             className="lg:col-span-2"
           >
-            <Card className="bg-white/10 backdrop-blur-lg border-none">
+            <Card className="bg-white backdrop-blur-lg border-neutral-500">
               <CardHeader>
                 <CardTitle>Upcoming Meetings</CardTitle>
               </CardHeader>
               <CardContent>
                 {meetings.length === 0 ? (
-                  <p className="text-gray-300">No meetings scheduled yet.</p>
+                  <p className="text-gray-500">No meetings scheduled yet.</p>
                 ) : (
                   <ul className="space-y-4">
                     {meetings.map((meeting, index) => (
@@ -177,22 +173,26 @@ export default function SalespersonDashboardPage() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.1 }}
                       >
-                        <Card className="bg-white/5 hover:bg-white/10 transition-colors duration-200">
+                        <Card className="bg-white/5 hover:bg-white/10 transition-colors border-neutral-300 duration-200">
                           <CardContent className="flex items-center justify-between p-4">
                             <div className="flex items-center space-x-4">
                               <User className="h-6 w-6 text-[#00FF8C]" />
                               <div>
-                                <p className="font-semibold">{meeting.customerName}</p>
-                                <div className="flex items-center space-x-2 text-sm text-gray-300">
+                                <p className="font-semibold">
+                                  {meeting.customerName}
+                                </p>
+                                <div className="flex items-center space-x-2 text-sm text-gray-500">
                                   <CalendarIcon className="h-4 w-4" />
-                                  <span>{meeting.date.toLocaleDateString()}</span>
+                                  <span>
+                                    {meeting.date.toLocaleDateString()}
+                                  </span>
                                   <Clock className="h-4 w-4 ml-2" />
                                   <span>{meeting.time}</span>
                                 </div>
                               </div>
                             </div>
-                            <Button 
-                              variant="outline" 
+                            <Button
+                              variant="outline"
                               onClick={() => handleViewDetails(meeting)}
                               className="text-[#00FF8C] border-[#00FF8C] hover:bg-[#00FF8C] hover:text-[#14144B]"
                             >
@@ -214,14 +214,14 @@ export default function SalespersonDashboardPage() {
             variants={fadeIn}
             transition={{ delay: 0.6 }}
           >
-            <Card className="bg-white/10 backdrop-blur-lg border-none">
+            <Card className="bg-white backdrop-blur-lg border-neutral-500">
               <CardHeader>
                 <CardTitle>Calendar</CardTitle>
               </CardHeader>
               <CardContent>
                 <Calendar
                   selected={new Date()}
-                  className="rounded-md border-none bg-transparent text-white"
+                  className="rounded-md border-none bg-transparent text-black"
                 />
               </CardContent>
             </Card>
@@ -230,7 +230,7 @@ export default function SalespersonDashboardPage() {
       </main>
 
       <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-        <DialogContent className="bg-[#14144B] text-white">
+        <DialogContent className="bg-white text-black border-neutral-500">
           <DialogHeader>
             <DialogTitle>Meeting Details</DialogTitle>
           </DialogHeader>
@@ -246,7 +246,9 @@ export default function SalespersonDashboardPage() {
                 <p>{selectedMeeting.customerName}</p>
               </div>
               <div>
-                <h3 className="font-semibold text-[#00FF8C] mb-2">Date and Time</h3>
+                <h3 className="font-semibold text-[#00FF8C] mb-2">
+                  Date and Time
+                </h3>
                 <div className="flex items-center space-x-2">
                   <CalendarIcon className="h-4 w-4 text-[#00FF8C]" />
                   <span>{selectedMeeting.date.toLocaleDateString()}</span>
@@ -254,22 +256,25 @@ export default function SalespersonDashboardPage() {
                   <span>{selectedMeeting.time}</span>
                 </div>
               </div>
-              <div>
+              {/* <div>
                 <h3 className="font-semibold text-[#00FF8C] mb-2">Actions</h3>
                 <div className="flex space-x-2">
                   <Button className="bg-[#00FF8C] text-[#14144B] hover:bg-[#00FF8C]/90">
                     Reschedule
                   </Button>
-                  <Button variant="outline" className="text-[#00FF8C] border-[#00FF8C] hover:bg-[#00FF8C] hover:text-[#14144B]">
+                  <Button
+                    variant="outline"
+                    className="text-[#00FF8C] border-[#00FF8C] hover:bg-[#00FF8C] hover:text-[#14144B]"
+                  >
                     Cancel Meeting
                   </Button>
                 </div>
-              </div>
+              </div> */}
             </motion.div>
           )}
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }
 

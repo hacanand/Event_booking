@@ -1,6 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 import axios from "axios";
 import axiosInstance from "@/app/utils/axiosInstance";
+import { fetchGoogleCalendarEventId } from "@/app/actions/calendly/tokenAndDataUpdate";
 
 // Define the interface for the schema
 export interface IEvent extends Document {
@@ -37,32 +38,11 @@ const EventSchema: Schema = new Schema(
   }
 );
 
-// Post-save middleware to fetch Google Calendar Event ID
 EventSchema.post("save", async function (doc: IEvent) {
   try {
-    
-    const res = await axiosInstance.put('/api/auth/calendly/refresh-token');
-    const token = res.data.data.accessToken;
-    if (!token) {
-      console.error("Google Calendar API token not found");
-      return;
-    }
-
-    // API call to Calendly to retrieve event details
-    const options = {
-      method: "GET",
-      url: `https://api.calendly.com/scheduled_events/${doc.eventUri
-        .split("/")
-        .pop()}`,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    };
-    
-    const response = await axios.request(options);
-    const googleCalendarEventId =
-      response.data.resource.calendar_event.external_id; // Replace with correct key from API response
+    const googleCalendarEventId = await fetchGoogleCalendarEventId(
+      doc.eventUri
+    );
 
     if (googleCalendarEventId) {
       // Update the document in MongoDB
@@ -70,7 +50,7 @@ EventSchema.post("save", async function (doc: IEvent) {
       await doc.save(); // Save the updated document
     }
   } catch (error) {
-    console.error("Error fetching Google Calendar Event ID:", error);
+    console.error("Error in post-save middleware:", error);
   }
 });
 

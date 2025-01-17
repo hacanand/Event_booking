@@ -16,14 +16,14 @@ const fadeIn = {
 }
 
 export default function LoginPage() {
-  const [role, setRole] = useState<"salesperson" | "customer">("customer");
-  const { userId } = useAuth();
+  const [role, setRole] = useState<string>("");
+  const { userId ,isSignedIn} = useAuth();
   const { user } = useUser();
   const router = useRouter();
 
   useEffect(() => {
     localStorage.setItem('role', role);
-    if (userId && user) {
+    if (isSignedIn && user) {
       if (user.publicMetadata.role === 'salesperson') {
         router.push('/salesperson-dashboard');
       } else {
@@ -60,9 +60,9 @@ export default function LoginPage() {
         variants={fadeIn}
         transition={{ delay: 0.2 }}
       >
-        <Card className="bg-white/15 backdrop-blur-lg">
-          <CardContent className="pt-6">
-            <div className="mb-6 ">
+        <Card className="bg-white/15 backdrop-blur-lg border-neutral-500">
+          <CardContent className="pt-6 ">
+            <div className=" text-center text-black">
               <RadioGroup
                 value={role}
                 onValueChange={(value: "salesperson" | "customer") =>
@@ -72,37 +72,33 @@ export default function LoginPage() {
               >
                 <div className="flex items-center space-x-2  ">
                   <RadioGroupItem value="salesperson" id="salesperson" />
-                  <Label htmlFor="salesperson" className="text-black ">
+                  <Label
+                    htmlFor="salesperson"
+                    className="text-black text-lg font-semibold "
+                  >
                     Salesperson
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="customer" id="customer" />
-                  <Label htmlFor="customer" className="text-black">
+                  <Label
+                    htmlFor="customer"
+                    className="text-black text-lg font-semibold"
+                  >
                     Customer
                   </Label>
                 </div>
               </RadioGroup>
             </div>
-            <SignIn
-              path="/sign-in"
-              routing='path'
-              // afterSignInUrl="/dashboard"
-              fallbackRedirectUrl="/dashboard"
-              appearance={{
-                elements: {
-                  formButtonPrimary:
-                    "bg-[#00FF8C] text-[#14144B] hover:bg-[#00FF8C]/90",
-                  socialButtonsBlockButton:
-                    "bg-white text-[#14144B] border border-gray-300 hover:bg-gray-50",
-                  socialButtonsBlockButtonText: "text-[#14144B] font-semibold",
-                  formFieldInput:
-                    "bg-white/5 border-gray-300 text-white placeholder-gray-400",
-                  formFieldLabel: "text-white",
-                  footerActionLink: "text-[#00FF8C] hover:text-[#00FF8C]/90",
-                },
-              }}
-            />
+            {role && (
+              <SignIn
+                path="/sign-in"
+                routing="path"
+                // afterSignInUrl="/dashboard"
+                fallbackRedirectUrl="/dashboard"
+              
+              />
+            )}
           </CardContent>
         </Card>
       </motion.div>

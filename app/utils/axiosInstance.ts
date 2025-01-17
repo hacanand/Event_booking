@@ -11,7 +11,7 @@ import axios from "axios";
 
 // Create and configure Axios instance
 const axiosInstance = axios.create({
-  timeout: 10000, // Set a timeout (10 seconds)
+  timeout: 20000, // Set a timeout (20 seconds)
   withCredentials: true, // Send cookies with requests
   headers: {
     "Content-Type": "application/json", // Default content type

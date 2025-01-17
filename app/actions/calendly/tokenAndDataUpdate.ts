@@ -1,5 +1,6 @@
 'use server'
 
+import axiosInstance from "@/app/utils/axiosInstance";
 import Token from "@/models/tokenModel";
 import axios, { AxiosInstance } from "axios";
 // Create a pre-configured Axios instance
@@ -127,3 +128,35 @@ export async function getCalendlyToken({ clerkId }: { clerkId: string }) {
    }
  }
     
+
+
+ export async function fetchGoogleCalendarEventId(
+   eventUri: string
+ ): Promise<string | null> {
+   try {
+     const res = await axiosInstance.put("/api/auth/calendly/refresh-token");
+     const token = res.data.data.accessToken;
+
+     if (!token) {
+       console.error("Google Calendar API token not found");
+       return null;
+     }
+
+     const options = {
+       method: "GET",
+       url: `https://api.calendly.com/scheduled_events/${eventUri
+         .split("/")
+         .pop()}`,
+       headers: {
+         "Content-Type": "application/json",
+         Authorization: `Bearer ${token}`,
+       },
+     };
+
+     const response = await axios.request(options);
+     return response.data.resource.calendar_event.external_id || null;
+   } catch (error) {
+     console.error("Error fetching Google Calendar Event ID:", error);
+     return null;
+   }
+ }
