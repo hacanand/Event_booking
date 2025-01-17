@@ -22,18 +22,19 @@ jobs:
           node-version: '20.x'
           cache: 'npm'
 
-      # Step 3: Install dependencies and build
+      # Step 3: Install Dependencies and Build
       - name: Install Dependencies and Build
         env:
           MONGO_URI: ${{ secrets.MONGO_URI }}
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.CLERK_PUBLISHABLE_KEY }}
         run: |
-          npm ci --omit=dev
-          npm run build
+          npm ci --omit=dev || (echo "npm ci failed, retrying with npm install..." && npm install --omit=dev)
+          npm run build || (echo "Build failed, exiting." && exit 1)
 
       # Step 4: Prune Node Modules
       - name: Prune Node Modules
-        run: npm prune --production
+        run: |
+          npm prune --production
 
       # Step 5: Prepare Deployment Package
       - name: Prepare Deployment Package
