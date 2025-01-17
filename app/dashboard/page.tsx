@@ -96,7 +96,7 @@ export default function DashboardPage() {
 
       try {
         let cachedRole= localStorage.getItem("role");
-
+        
         // Cache the user's role if not already cached
         if (!cachedRole && user.publicMetadata.role) {
           
@@ -121,6 +121,14 @@ export default function DashboardPage() {
           await axiosInstance.post("/api/clerk/role-assign", {
             userId: userId,
             role: user.publicMetadata.role,
+          });
+          await axiosInstance.post("/api/users", {
+            clerkId: userId,
+            userType: user.publicMetadata.role,
+            email: user.emailAddresses[0].emailAddress,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            profilePicture: user?.imageUrl,
           });
           localStorage.setItem("role", user.publicMetadata.role as string); // Cache the role
         }
