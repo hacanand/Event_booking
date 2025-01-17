@@ -28,6 +28,8 @@ jobs:
 
       # Step 3: Install dependencies and build the app
       - name: Install Dependencies and Build
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }}
         run: |
           npm install
           npm run build
