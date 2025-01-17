@@ -1,12 +1,3 @@
-// import axios from "axios";
-
-// const axiosInstance = axios.create({
-//   baseURL: process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000",
-// });
-
-// export default axiosInstance;
-
-
 import axios from "axios";
 
 // Create and configure Axios instance
@@ -18,25 +9,7 @@ const axiosInstance = axios.create({
     Accept: "application/json", // Accept JSON responses
   },
   baseURL: process.env.NEXT_PUBLIC_BASE_URL || `http://localhost:${process.env.PORT || 8080}`, // Fallback to localhost with default port
-  // baseURL: `http://localhost:${process.env.PORT || 8080}`,
 });
-
-// Add a request interceptor
-// axiosInstance.interceptors.request.use(
-//   (config) => {
-//     // You can attach an authentication token to each request
-//     const token = localStorage.getItem("authToken"); // Or any other method to get the token
-//     if (token) {
-//       config.headers.Authorization = `Bearer ${token}`;
-//     }
-//     return config;
-//   },
-//   (error) => {
-//     // Handle request errors
-//     console.error("Request error:", error);
-//     return Promise.reject(error);
-//   }
-// );
 
 // Add a response interceptor
 axiosInstance.interceptors.response.use(
