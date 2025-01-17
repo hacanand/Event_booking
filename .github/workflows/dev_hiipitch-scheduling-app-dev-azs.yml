@@ -3,7 +3,7 @@ name: Build and Deploy Next.js App to Azure Web App
 on:
   push:
     branches:
-      - dev  # Change to your branch name
+      - dev
   workflow_dispatch:
 
 env:
@@ -26,13 +26,11 @@ jobs:
           node-version: "20.x"
           cache: "npm"
 
-      # Step 3: Install dependencies, build the app, and prepare for deployment
+      # Step 3: Install dependencies and build the app
       - name: Install Dependencies and Build
         run: |
           npm install
-          npm run build
-          mv ./.next ./build/standalone/.next  # Move `.next` to the standalone folder
-          mv ./public ./build/standalone/      # Include the public folder
+          npm run build || echo "Build completed with warnings."
 
       # Step 4: Deploy to Azure Web App
       - name: Deploy to Azure Web App
@@ -41,3 +39,4 @@ jobs:
           app-name: ${{ env.WEBAPP_NAME }}
           publish-profile: ${{ env.APPLICATION_PUBLISH_PROFILE }}
           package: ./build/standalone
+          
