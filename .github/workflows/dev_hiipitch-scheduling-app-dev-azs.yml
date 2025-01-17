@@ -30,13 +30,23 @@ jobs:
       - name: Install Dependencies and Build
         run: |
           npm install
-          npm run build || echo "Build completed with warnings."
+          npm run build
+          mkdir -p ./build/standalone
+          mv ./.next ./build/standalone/.next
+          cp -r ./public ./build/standalone/ || true
+          cp ./package.json ./build/standalone/
+          cp -r ./node_modules ./build/standalone/
 
-      # Step 4: Deploy to Azure Web App
+      # Step 4: Verify the build output
+      - name: Verify Build Output
+        run: |
+          echo "Contents of the standalone directory:"
+          ls -l ./build/standalone
+
+      # Step 5: Deploy to Azure Web App
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ env.WEBAPP_NAME }}
           publish-profile: ${{ env.APPLICATION_PUBLISH_PROFILE }}
           package: ./build/standalone
-          
