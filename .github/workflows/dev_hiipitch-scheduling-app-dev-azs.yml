@@ -39,7 +39,7 @@ jobs:
       - name: Prepare Deployment Package
         run: |
           mkdir -p deployment-package
-          cp -r .next public package.json node_modules deployment-package/
+          cp -r build public package.json node_modules deployment-package/
           ls -l deployment-package
 
       # Step 5: Deploy to Azure Web App
