@@ -33,17 +33,29 @@ jobs:
 
       # Step 4: Prune dev dependencies to reduce package size
       - name: Prune Node Modules
-        run: npm prune --production
+        run: |
+          npm prune --production
+          echo "Pruned non-production dependencies."
 
       # Step 5: Create the deployment package
       - name: Create Deployment Archive
         run: |
           mkdir -p deployment-package
           cp -r .next package.json node_modules public deployment-package/
+          echo "Ensuring required files are included in the deployment package:"
+          ls -lh deployment-package
           rm -rf deployment-package/.next/cache
+          echo "Removed unnecessary cache files from the deployment package."
           zip -r deployment-package.zip deployment-package
 
-      # Step 6: Deploy to Azure Web App
+      # Step 6: Verify the deployment package
+      - name: Verify Deployment Package
+        run: |
+          echo "Verifying the deployment package size and contents:"
+          du -sh deployment-package.zip
+          unzip -l deployment-package.zip
+
+      # Step 7: Deploy to Azure Web App
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
