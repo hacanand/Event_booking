@@ -8,7 +8,6 @@ const nextConfig = {
     ignoreDuringBuilds: true, // Ignore ESLint errors
   },
   distDir: 'build',
-  output: 'standalone',
 };
 
 export default nextConfig;
