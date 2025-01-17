@@ -40,12 +40,12 @@ export default function SalespersonDashboardPage() {
   }
 
   if (!user) {
-    router.push('/login')
+    router.push('/sign-in')
     return null
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#14144B] to-[#0A0A2A] text-white">
+    <div className="min-h-screen bg-white text-black">
       {/* <header className="bg-white/10 backdrop-blur-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <Image
@@ -56,7 +56,7 @@ export default function SalespersonDashboardPage() {
             unoptimized
           />
           <Button 
-            onClick={() => router.push('/login')} 
+            onClick={() => router.push('/sign-in')} 
             variant="outline"
             className="text-white border-white hover:bg-white hover:text-[#14144B]"
           >

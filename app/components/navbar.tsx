@@ -11,7 +11,7 @@ export default function Navbar() {
   const router = useRouter();
 
   return (
-    <nav className="sticky top-0 z-10 bg-indigo-800 backdrop-blur-xl shadow-md">
+    <nav className="sticky top-0 z-10 bg-white/10 backdrop-blur-xl shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
         <div className="flex justify-between h-16 items-center">
           <Link href="/" className="relative flex items-center">
@@ -27,9 +27,9 @@ export default function Navbar() {
           </Link>
 
           <div className="flex items-center gap-6">
-            {isSignedIn ? (
+             {isSignedIn ? (
               <>
-                <Link
+              {/*  <Link
                   href={
                     user.publicMetadata.role === "salesperson"
                       ? "/salesperson-dashboard"
@@ -46,14 +46,14 @@ export default function Navbar() {
                   >
                     Book Meeting
                   </Link>
-                )}
+                )} */}
                 <UserButton />
               </>
             ) : (
               <>
-                <div className="flex items-center gap-4 text-xl font-bold bg-gradient-to-r from-[#FF00A6] to-[#FF7D00] px-4 py-2  text-transparent bg-clip-text">
+                {/* <div className="flex items-center gap-4 text-xl font-bold bg-gradient-to-r from-[#FF00A6] to-[#FF7D00] px-4 py-2  text-transparent bg-clip-text">
                   Hi there! Please sign in to continue...
-                </div>
+                </div> */}
               </>
             )}
           </div>

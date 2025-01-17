@@ -60,17 +60,17 @@ export default function BookSlotPage() {
   };
 
   if (!user) {
-    router.push("/login");
+    router.push("/sign-in");
     return null;
   }
 
   return (
     <PageTransition>
-      <div className="min-h-screen bg-gradient-to-br from-[#14144B] to-[#0A0A2A] py-12">
+      <div className="min-h-screen bg-white text-black py-12">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Card className="bg-white/10 backdrop-blur-lg border-none">
+          <Card className="bg-white backdrop-blur-lg border-neutral-500">
             <CardHeader>
-              <CardTitle className="text-2xl font-bold text-white">
+              <CardTitle className="text-2xl font-bold text-black">
                 Book a Meeting with a Salesperson
               </CardTitle>
             </CardHeader>
@@ -80,14 +80,14 @@ export default function BookSlotPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                <h3 className="text-lg font-medium text-white mb-2">
+                <h3 className="text-lg font-medium text-black mb-2">
                   Select a Date
                 </h3>
                 <Calendar
                   // mode="single"
                   selected={selectedDate}
                   onSelect={setSelectedDate}
-                  className="rounded-md border-none bg-white/5 text-white"
+                  className="rounded-md border-none bg-white/5 text-black"
                 />
               </motion.div>
               <motion.div
@@ -95,11 +95,11 @@ export default function BookSlotPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
-                <h3 className="text-lg font-medium text-white mb-2">
+                <h3 className="text-lg font-medium text-black mb-2">
                   Select a Time
                 </h3>
                 <Select onValueChange={setSelectedTime}>
-                  <SelectTrigger className="w-full bg-white/5 text-white border-none">
+                  <SelectTrigger className="w-full bg-white/5 text-black border-none">
                     <SelectValue placeholder="Select a time slot" />
                   </SelectTrigger>
                   <SelectContent>

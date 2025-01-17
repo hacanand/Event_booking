@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from "next/image"
 import { motion } from "framer-motion"
@@ -22,7 +22,7 @@ interface Meeting {
   date: Date
   time: string
 }
-
+ 
 export default function CustomerDashboardPage() {
   if (typeof window === 'undefined') return null;
   const router = useRouter()
@@ -40,13 +40,18 @@ export default function CustomerDashboardPage() {
     setIsDetailsOpen(true)
   }
 
+  useEffect(() => {
+    if (!user) {
+      router.push('/sign-in')
+    }
+  }, [user, router])
+
   if (!user) {
-    router.push('/login')
     return null;
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#14144B] to-[#0A0A2A] text-white">
+    <div className="min-h-screen bg-white text-white">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <motion.h1
           initial="hidden"
@@ -65,7 +70,7 @@ export default function CustomerDashboardPage() {
             transition={{ delay: 0.2 }}
             className="col-span-full"
           >
-            <Card className="bg-white/10 backdrop-blur-lg border-none h-full">
+            <Card className="bg-white backdrop-blur-lg border-neutral-300 h-full">
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <CalendarIcon className="mr-2 text-[#00FF8C]" />
@@ -73,7 +78,7 @@ export default function CustomerDashboardPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="mt-2 text-sm text-gray-300">Ready to book a meeting with a salesperson?</p>
+                <p className="mt-2 text-sm text-gray-600">Ready to book a meeting with a salesperson?</p>
                 <Button 
                   onClick={() => router.push('/customer/book-slot')}
                   className="mt-4 bg-[#00FF8C] text-[#14144B] hover:bg-[#00FF8C]/90"
@@ -93,7 +98,7 @@ export default function CustomerDashboardPage() {
             transition={{ delay: 0.5 }}
             className="lg:col-span-2"
           >
-            <Card className="bg-white/10 backdrop-blur-lg border-none">
+            <Card className="bg-white  backdrop-blur-lg border-neutral-300">
               <CardHeader>
                 <CardTitle>Upcoming Meetings</CardTitle>
               </CardHeader>
@@ -115,7 +120,7 @@ export default function CustomerDashboardPage() {
                               <User className="h-6 w-6 text-[#00FF8C]" />
                               <div>
                                 <p className="font-semibold">{meeting.salespersonName}</p>
-                                <div className="flex items-center space-x-2 text-sm text-gray-300">
+                                <div className="flex items-center space-x-2 text-sm text-gray-500">
                                   <CalendarIcon className="h-4 w-4" />
                                   <span>{meeting.date.toLocaleDateString()}</span>
                                   <Clock className="h-4 w-4 ml-2" />
@@ -146,14 +151,14 @@ export default function CustomerDashboardPage() {
             variants={fadeIn}
             transition={{ delay: 0.6 }}
           >
-            <Card className="bg-white/10 backdrop-blur-lg border-none">
+            <Card className="bg-white/10 backdrop-blur-lg border-neutral-300">
               <CardHeader>
                 <CardTitle>Calendar</CardTitle>
               </CardHeader>
               <CardContent>
                 <Calendar
                   selected={new Date()}
-                  className="rounded-md border-none bg-transparent text-white"
+                  className="rounded-md border-none bg-transparent text-black"
                 />
               </CardContent>
             </Card>
@@ -162,7 +167,7 @@ export default function CustomerDashboardPage() {
       </main>
 
       <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-        <DialogContent className="bg-[#14144B] text-white">
+        <DialogContent className="bg-white text-black">
           <DialogHeader>
             <DialogTitle>Meeting Details</DialogTitle>
           </DialogHeader>
@@ -186,7 +191,7 @@ export default function CustomerDashboardPage() {
                   <span>{selectedMeeting.time}</span>
                 </div>
               </div>
-              <div>
+              {/* <div>
                 <h3 className="font-semibold text-[#00FF8C] mb-2">Actions</h3>
                 <div className="flex space-x-2">
                   <Button className="bg-[#00FF8C] text-[#14144B] hover:bg-[#00FF8C]/90">
@@ -196,7 +201,7 @@ export default function CustomerDashboardPage() {
                     Cancel Meeting
                   </Button>
                 </div>
-              </div>
+              </div> */}
             </motion.div>
           )}
         </DialogContent>

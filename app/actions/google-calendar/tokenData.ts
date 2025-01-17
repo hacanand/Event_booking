@@ -1,6 +1,7 @@
 "use server";
 import Token from "@/models/tokenModel";
 import { Credentials } from "google-auth-library";
+import { isCalendlyLoggedIn } from "../calendly/tokenAndDataUpdate";
 export async function createToken(clerkId: string, calendlyRefreshToken:string) {
   if (!clerkId || !calendlyRefreshToken) {
     throw new Error("clerkId and calendlyToken are required.");
@@ -109,3 +110,16 @@ export async function isGoggleCalLoggedIn({ clerkId }: { clerkId: string }) {
 }
 
  
+export async function isAllConnected({ clerkId }: { clerkId: string }) {
+  if (!clerkId) {
+    throw new Error("clerkId is required.");
+  }
+  try {
+    const googleCalLoggedIn = await isGoggleCalLoggedIn({ clerkId });
+    const calendlyLoggedIn = await isCalendlyLoggedIn({ clerkId });
+    return googleCalLoggedIn && calendlyLoggedIn;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+  }

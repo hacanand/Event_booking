@@ -1,7 +1,7 @@
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { ClerkProvider } from '@clerk/nextjs'
-import {dark, shadesOfPurple} from '@clerk/themes'
+// import {dark, shadesOfPurple} from '@clerk/themes'
 import Navbar from './components/navbar'
 import { ToastProvider } from './contexts/toast-context'
  
@@ -17,10 +17,11 @@ export default function RootLayout({
   return (
     <ClerkProvider
       afterSignOutUrl="/sign-in"
-      appearance={{
-        baseTheme: shadesOfPurple,
-        variables: { colorPrimary: "#00FF8C" },
-      }}
+      
+      // appearance={{
+      //   baseTheme: shadesOfPurple,
+      //   variables: { colorPrimary: "#00FF8C" },
+      // }}
     >
       <html lang="en">
         <body className={inter.className}>

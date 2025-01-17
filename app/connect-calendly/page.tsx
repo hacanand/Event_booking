@@ -25,7 +25,7 @@ export default function ConnectCalendlyPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#14144B] to-[#0A0A2A] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-white flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
       <motion.div 
         className="sm:mx-auto sm:w-full sm:max-w-md"
         initial="hidden"
@@ -40,7 +40,7 @@ export default function ConnectCalendlyPage() {
           className="mx-auto"
           unoptimized
         />
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-black">
           Connect Your Calendly
         </h2>
       </motion.div>
@@ -55,7 +55,7 @@ export default function ConnectCalendlyPage() {
         <Card className="bg-white/10 backdrop-blur-lg">
           <CardContent className="pt-6">
             <motion.p 
-              className="text-center mb-6 text-white"
+              className="text-center mb-6 text-black"
               variants={fadeIn}
               transition={{ delay: 0.3 }}
             >

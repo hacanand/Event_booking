@@ -54,7 +54,7 @@ export default function SchedulePage({ params }: { params: { salesId: string } }
   }
 
   if (!user) {
-    router.push('/login')
+    router.push('/sign-in')
     return null
   }
 

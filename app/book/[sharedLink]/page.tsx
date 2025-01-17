@@ -66,7 +66,7 @@ export default function CustomerBookingPage({
   };
 
   if (!user) {
-    router.push("/login");
+    router.push("/sign-in");
     return null;
   }
 

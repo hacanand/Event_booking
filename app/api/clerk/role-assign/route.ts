@@ -14,7 +14,8 @@ export async function POST(request: NextRequest) {
   });
     return NextResponse.json({
       message: "User role updated successfully",
-      status: 200
+      status: 200,
+      role: role
     });
     
   } catch (error) {
