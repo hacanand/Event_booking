@@ -35,10 +35,18 @@ jobs:
       - name: Prune Node Modules
         run: npm prune --production
 
-      # Step 5: Deploy files directly to Azure Web App
+      # Step 5: Create the deployment package
+      - name: Create Deployment Archive
+        run: |
+          mkdir -p deployment-package
+          cp -r .next package.json node_modules public deployment-package/
+          rm -rf deployment-package/.next/cache
+          zip -r deployment-package.zip deployment-package
+
+      # Step 6: Deploy to Azure Web App
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'hiipitch-scheduling-app-dev-azs'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_4385ACEF9DF8458AA19B97ACE948ED13 }}
-          package: .
+          package: deployment-package.zip
