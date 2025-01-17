@@ -11,36 +11,45 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the code
+      # Step 1: Checkout Code
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # Step 2: Set up Node.js environment
+      # Step 2: Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20.x'
           cache: 'npm'
 
-      # Step 3: Install dependencies and build the app
+      # Step 3: Install dependencies and build
       - name: Install Dependencies and Build
         env:
           MONGO_URI: ${{ secrets.MONGO_URI }}
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.CLERK_PUBLISHABLE_KEY }}
-          NEXT_IGNORE_TYPE_ERRORS: "true" # Temporarily ignore type errors if needed
         run: |
-          npm ci --omit=dev || echo "Dependency installation failed, continuing..."
-          npm run build || echo "Build failed, continuing..."
-        continue-on-error: true
+          npm ci --omit=dev
+          npm run build
 
-      # Step 4: Prepare the deployment package
+      # Step 4: Prune Node Modules
+      - name: Prune Node Modules
+        run: npm prune --production
+
+      # Step 5: Prepare Deployment Package
       - name: Prepare Deployment Package
         run: |
           mkdir -p deployment-package
           cp -r package.json node_modules .next public deployment-package/
           zip -r deployment-package.zip deployment-package
 
-      # Step 5: Deploy to Azure Web App
+      # Step 6: Upload Deployment Artifact (optional)
+      - name: Upload Deployment Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: deployment-package
+          path: deployment-package.zip
+
+      # Step 7: Deploy to Azure Web App
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
