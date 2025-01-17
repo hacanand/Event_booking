@@ -11,38 +11,46 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      # Step 1: Checkout the code
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
+      # Step 2: Set up Node.js environment
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20.x'
           cache: 'npm'
 
+      # Step 3: Install dependencies and build the application
       - name: Install Dependencies and Build
         env:
           MONGO_URI: ${{ secrets.MONGO_URI }}
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.CLERK_PUBLISHABLE_KEY }}
         run: |
-          npm ci --omit=dev
-          npm run build || (echo "Build completed with warnings" && true)
+          npm ci
+          npm run build
 
+      # Step 4: Prune dev dependencies to reduce package size
       - name: Prune Node Modules
         run: npm prune --production
 
+      # Step 5: Create the deployment package
       - name: Create Deployment Archive
         run: |
           mkdir -p deployment-package
-          cp -r .next package.json public deployment-package/
+          cp -r .next package.json node_modules public deployment-package/
           rm -rf deployment-package/.next/cache
           zip -r -9 deployment-package.zip deployment-package
 
+      # Step 6: Upload the deployment package as an artifact (optional for debugging purposes)
       - name: Upload Deployment Artifact
         uses: actions/upload-artifact@v3
         with:
           name: deployment-package
           path: deployment-package.zip
 
+      # Step 7: Deploy to Azure Web App
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
