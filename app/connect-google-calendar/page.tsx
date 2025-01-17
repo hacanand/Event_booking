@@ -1,11 +1,12 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Image from "next/image"
 import { motion } from "framer-motion"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { useToast } from '../contexts/toast-context'
 
 const fadeIn = {
   hidden: { opacity: 0, y: -20 },
@@ -15,7 +16,16 @@ const fadeIn = {
 export default function ConnectGoogleCalendarPage() {
   const [isConnecting, setIsConnecting] = useState(false)
   const router = useRouter()
+ const {showToast} = useToast()
+  const searchParams = useSearchParams();
 
+  const success = searchParams.get("response");
+  const status = searchParams.get("status");
+useEffect(() => {
+  if (success && status) {
+    showToast(success, status as any);
+  }
+}, [success, status]);
   const handleConnectGoogleCalendar = () => {
     setIsConnecting(true)
     setTimeout(() => {

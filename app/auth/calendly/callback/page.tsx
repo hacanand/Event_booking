@@ -6,53 +6,60 @@ import {
 import { currentUser } from "@clerk/nextjs/server";
 import { createToken } from "@/app/actions/google-calendar/tokenData";
 import axiosInstance from "@/app/utils/axiosInstance";
-// import { redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 
 export default async function CallbackPage({
   searchParams,
 }: {
   searchParams: { code: string };
 }) {
-  const code = (await searchParams).code;
+  const code = searchParams?.code;
+
   if (!code) {
-    return <p> Authorization code not found.</p>;
+    redirect("/connect-google-calendar?error=missing_code");
+    return null; // Prevent further execution
   }
+
   try {
     console.time("calendly-auth");
+
     const res = await exchangeCodeForToken(code);
+
+    // Set cookies for Calendly tokens
     await axiosInstance.post("/api/auth/calendly/set-cookies", {
       access_token: res?.access_token,
       refresh_token: res?.refresh_token,
     });
-    console.timeLog("calendly-auth");
-    // console.log(data);
-    // console.log( "refreshToken:-",res.refresh_token)
 
     const user = await currentUser();
 
     if (user?.id) {
-      await createToken(user.id, res?.refresh_token);
+      // Save token and user data
+      // await createToken(user.id, res?.refresh_token);
       const response = await saveCalendlyUserAndUrlData(
-        user?.id,
-        res?.access_token
+        user.id,
+        res.access_token
       );
-      const regWebhook = await registerCalendlyWebhook(
-        res?.access_token,
+
+      // Register Calendly webhook
+      await registerCalendlyWebhook(
+        res.access_token,
         response?.resource?.current_organization
       );
-      console.log("webhook console :-", regWebhook);
-      console.timeLog("calendly-auth");
     } else {
-      return <p>User ID not found.</p>;
+      redirect("/connect-google-calendar?error=user_not_found");
+      return null; // Prevent further execution
     }
+
     console.timeEnd("calendly-auth");
 
-    return <p>calendly cookies set</p>;
-
-    // redirect("/?calendly-auth=success");
+    // Redirect to Google Calendar connection page after successful authentication
+    redirect("/connect-google-calendar");
+    return null; // Prevent further execution
   } catch (error) {
     console.error("Error exchanging code for token:", error);
     console.timeEnd("calendly-auth");
-    return <p>Error during authentication.</p>;
+    redirect("/connect-google-calendar?error=auth_failed");
+    return null; // Prevent further execution
   }
 }

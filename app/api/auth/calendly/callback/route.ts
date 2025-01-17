@@ -1,38 +1,75 @@
-// src/app/api/auth/calendly/callback.ts
 import { NextResponse } from "next/server";
-import axios from "axios";
-// import { env } from "@/utils/env";
+import { registerCalendlyWebhook } from "@/scripts/registerWebhook";
+import {
+  exchangeCodeForToken,
+  saveCalendlyUserAndUrlData,
+} from "@/lib/calendly";
+import { currentUser } from "@clerk/nextjs/server";
+import axiosInstance from "@/app/utils/axiosInstance";
+import { createRedirectResponse } from "@/lib/redirectHelper";
+import { createToken } from "@/app/actions/google-calendar/tokenData";
+ 
 
-export async function POST(request: Request) {
-  // const { searchParams } = new URL(request.url);
-  // const code = searchParams.get("code");
-  const { code } = await request.json();
-  if (!code) {
-    return NextResponse.json(
-      { error: "Authorization code is missing" },
-      { status: 400 }
-    );
-  }
-
+export async function GET(req: Request) {
   try {
-    const response = await axios.post(
-      "https://auth.calendly.com/oauth/token",
-      {
-        grant_type: "authorization_code",
-        client_id: process.env.NEXT_PUBLIC_CALENDLY_CLIENT_ID,
-        client_secret: process.env.CALENDLY_CLIENT_SECRET,
-        redirect_uri: process.env.NEXT_PUBLIC_CALENDLY_REDIRECT_URI,
-        code,
-      },
-      { headers: { "Content-Type": "application/json" } }
+    const url = new URL(req.url);
+    const code = url.searchParams.get("code");
+
+    if (!code) {
+      return createRedirectResponse("/connect-calendly", {
+        response: "Missing authorization code.",
+        status: "error",
+      });
+    }
+
+    console.time("calendly-auth");
+
+    // Exchange authorization code for tokens
+    const res = await exchangeCodeForToken(code);
+
+    // Set cookies for Calendly tokens
+    // await axiosInstance.post("/api/auth/calendly/set-cookies", {
+    //   access_token: res?.access_token,
+    //   refresh_token: res?.refresh_token,
+    // });
+    const user = await currentUser();
+
+    if (!user?.id) {
+      return createRedirectResponse("/connect-calendly", {
+        response: "User not found.",
+        status: "error",
+      });
+    }
+
+    // Save token and user data
+
+    await createToken(user.id, res?.refresh_token);
+    const response = await saveCalendlyUserAndUrlData(
+      user.id,
+      res.access_token
     );
 
-    const accessToken = response.data.access_token;
-    return NextResponse.json({ accessToken: accessToken });
-  } catch (error: any) {
-    return NextResponse.json(
-      { error: error.response?.data || "Internal server error" },
-      { status: 500 }
+    // Register Calendly webhook
+    await registerCalendlyWebhook(
+      res.access_token,
+      response?.resource?.current_organization
     );
+
+    console.timeEnd("calendly-auth");
+
+    // Redirect to success page with query params
+    return createRedirectResponse("/connect-google-calendar", {
+      response: "Calendly connected successfully",
+      status: "success",
+    });
+
+     
+  } catch (error) {
+    console.error("Error in Calendly OAuth callback:", error);
+    console.timeEnd("calendly-auth");
+    return createRedirectResponse("/connect-calendly", {
+      response: "Failed to authenticate with Calendly.",
+      status: "error",
+    });
   }
 }

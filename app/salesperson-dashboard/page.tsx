@@ -33,6 +33,7 @@ export default function SalespersonDashboardPage() {
   ])
   const [selectedMeeting, setSelectedMeeting] = useState<Meeting | null>(null)
   const [isDetailsOpen, setIsDetailsOpen] = useState(false)
+  
 
   const handleViewDetails = (meeting: Meeting) => {
     setSelectedMeeting(meeting)

@@ -2,6 +2,7 @@
 import Token from "@/models/tokenModel";
 import { Credentials } from "google-auth-library";
 import { isCalendlyLoggedIn } from "../calendly/tokenAndDataUpdate";
+import dbConnect from "@/app/utils/dbConnect";
 export async function createToken(clerkId: string, calendlyRefreshToken:string) {
   if (!clerkId || !calendlyRefreshToken) {
     throw new Error("clerkId and calendlyToken are required.");
@@ -9,13 +10,13 @@ export async function createToken(clerkId: string, calendlyRefreshToken:string) 
 
   try {
     // Create a new token document
-    const newToken = new Token({
+    await dbConnect()
+    const newToken = await Token.create({
       clerkId,
       calendlyRefreshToken,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
-    // Save the document to the database
-    await newToken.save();
-
     // Optionally redirect or return the created token
     return { message: "Token document created successfully", token: newToken };
   } catch (error) {
@@ -31,6 +32,7 @@ export async function updateGoogleCalendarToken(clerkId: string, googleToken: Cr
   }
 
   try {
+     await dbConnect();
     // Find the token document by clerkId and update the Google Calendar token
     const updatedToken = await Token.findOneAndUpdate(
       { clerkId },
@@ -65,6 +67,7 @@ export async function getGoogleToken({
   }
 
   try {
+     await dbConnect();
     // Find the token document by clerkId
     const tokenDocument = await Token.findOne({ clerkId });
 
@@ -96,6 +99,7 @@ export async function isGoggleCalLoggedIn({ clerkId }: { clerkId: string }) {
   }
 
   try {
+     await dbConnect();
     // Find the token document by clerkId
     const tokenDocument = await Token.findOne({ clerkId });
 

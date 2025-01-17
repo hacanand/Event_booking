@@ -5,10 +5,8 @@ import { ClerkProvider } from '@clerk/nextjs'
 import Navbar from './components/navbar'
 import { ToastProvider } from './contexts/toast-context'
  
- 
 
 const inter = Inter({ subsets: ['latin'] })
-
 export default function RootLayout({
   children,
 }: {
@@ -17,11 +15,6 @@ export default function RootLayout({
   return (
     <ClerkProvider
       afterSignOutUrl="/sign-in"
-      
-      // appearance={{
-      //   baseTheme: shadesOfPurple,
-      //   variables: { colorPrimary: "#00FF8C" },
-      // }}
     >
       <html lang="en">
         <body className={inter.className}>
