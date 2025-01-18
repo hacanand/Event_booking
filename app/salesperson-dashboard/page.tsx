@@ -1,54 +1,69 @@
-'use client'
-
-import { useEffect, useState } from 'react'
-import { useAuth } from '../contexts/auth-context'
-import { useRouter } from 'next/navigation'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { CalendarIcon, Clock, User, X } from 'lucide-react'
-import { Calendar } from '@/components/ui/calendar'
+"use client";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { CalendarIcon, Clock, User, X } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { PageTransition } from '../components/page-transition'
-import { motion, AnimatePresence } from 'framer-motion'
+} from "@/components/ui/dialog";
+
+import { motion, AnimatePresence } from "framer-motion";
+import { useClerk } from "@clerk/nextjs";
+import { PageTransition } from "@/components/page-transition";
 
 interface Meeting {
-  id: string
-  customerName: string
-  date: string
-  time: string
+  id: string;
+  customerName: string;
+  date: string;
+  time: string;
 }
 
-export default function DashboardPage() {
-  const { user } = useAuth()
-  const router = useRouter()
-  const [meetings, setMeetings] = useState<Meeting[]>([])
-  const [selectedMeeting, setSelectedMeeting] = useState<Meeting | null>(null)
-  const [isDetailsOpen, setIsDetailsOpen] = useState(false)
+export default function SalespersonDashboardPage() {
+  const { user } = useClerk();
+  const router = useRouter();
+  const [meetings, setMeetings] = useState<Meeting[]>([]);
+  const [selectedMeeting, setSelectedMeeting] = useState<Meeting | null>(null);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
   useEffect(() => {
     if (!user) {
-      router.push('/login')
+      router.push("/sign-in");
     } else {
       const mockMeetings: Meeting[] = [
-        { id: '1', customerName: 'Alice Johnson', date: '2024-12-31', time: '10:00 AM' },
-        { id: '2', customerName: 'Bob Smith', date: '2025-01-02', time: '2:00 PM' },
-        { id: '3', customerName: 'Charlie Brown', date: '2025-01-03', time: '11:30 AM' },
-      ]
-      setMeetings(mockMeetings)
+        {
+          id: "1",
+          customerName: "Alice Johnson",
+          date: "2024-12-31",
+          time: "10:00 AM",
+        },
+        {
+          id: "2",
+          customerName: "Bob Smith",
+          date: "2025-01-02",
+          time: "2:00 PM",
+        },
+        {
+          id: "3",
+          customerName: "Charlie Brown",
+          date: "2025-01-03",
+          time: "11:30 AM",
+        },
+      ];
+      setMeetings(mockMeetings);
     }
-  }, [user, router])
+  }, [user, router]);
 
   const handleViewDetails = (meeting: Meeting) => {
-    setSelectedMeeting(meeting)
-    setIsDetailsOpen(true)
-  }
+    setSelectedMeeting(meeting);
+    setIsDetailsOpen(true);
+  };
 
-  if (!user) return null
+  if (!user) return null;
 
   return (
     <PageTransition>
@@ -84,7 +99,9 @@ export default function DashboardPage() {
                             <div className="flex items-center space-x-4">
                               <User className="h-6 w-6 text-[#14144B]" />
                               <div>
-                                <p className="font-semibold text-[#14144B]">{meeting.customerName}</p>
+                                <p className="font-semibold text-[#14144B]">
+                                  {meeting.customerName}
+                                </p>
                                 <div className="flex items-center space-x-2 text-sm text-gray-500">
                                   <CalendarIcon className="h-4 w-4" />
                                   <span>{meeting.date}</span>
@@ -93,7 +110,12 @@ export default function DashboardPage() {
                                 </div>
                               </div>
                             </div>
-                            <Button variant="outline" onClick={() => handleViewDetails(meeting)}>View Details</Button>
+                            <Button
+                              variant="outline"
+                              onClick={() => handleViewDetails(meeting)}
+                            >
+                              View Details
+                            </Button>
                           </CardContent>
                         </Card>
                       </motion.li>
@@ -123,7 +145,9 @@ export default function DashboardPage() {
                 <p>{selectedMeeting.customerName}</p>
               </div>
               <div>
-                <h3 className="font-semibold text-[#14144B] mb-2">Date and Time</h3>
+                <h3 className="font-semibold text-[#14144B] mb-2">
+                  Date and Time
+                </h3>
                 <div className="flex items-center space-x-2">
                   <CalendarIcon className="h-4 w-4 text-[#14144B]" />
                   <span>{selectedMeeting.date}</span>
@@ -144,6 +168,5 @@ export default function DashboardPage() {
         </DialogContent>
       </Dialog>
     </PageTransition>
-  )
+  );
 }
-

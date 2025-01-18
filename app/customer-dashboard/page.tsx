@@ -88,7 +88,7 @@ export default function CustomerDashboardPage() {
               ) : (
                 <motion.ul className="space-y-4">
                   <AnimatePresence>
-                    {meetings.map((meeting, index) => (
+                    {meetings.map((meeting,index) => (
                       <motion.li
                         key={meeting.id}
                         initial={{ opacity: 0, y: 20 }}

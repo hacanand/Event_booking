@@ -59,7 +59,7 @@ export default function LoginPage() {
                   path="/sign-in"
                   routing="path"
                   signInUrl="/sign-in"
-                  // fallbackRedirectUrl="/customer-dashboard" // Fallback redirect
+                  fallbackRedirectUrl="/customer-dashboard" // Fallback redirect
                   appearance={{
                     elements: {
                       formButtonPrimary:
@@ -81,7 +81,7 @@ export default function LoginPage() {
                   path="/sign-in"
                   routing="path"
                   signInUrl="/sign-in"
-                  // fallbackRedirectUrl="/dashboard" // Fallback redirect
+                  fallbackRedirectUrl="/onboarding" // Fallback redirect
                   appearance={{
                     elements: {
                       formButtonPrimary:

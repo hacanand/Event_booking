@@ -6,13 +6,14 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Calendar } from '@/components/ui/calendar'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { toast } from '@/components/ui/use-toast'
-import { PageTransition } from '../components/page-transition'
+import { useToast } from '@/hooks/use-toast'
+import { PageTransition } from '@/components/page-transition'
 import { motion, AnimatePresence } from 'framer-motion'
 import { CheckCircle } from 'lucide-react'
 
 export default function SchedulePage() {
   const router = useRouter()
+  const { toast } = useToast()
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
   const [selectedTime, setSelectedTime] = useState<string | undefined>(undefined)
   const [isScheduled, setIsScheduled] = useState(false)

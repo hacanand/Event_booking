@@ -22,7 +22,7 @@ export default function Navbar() {
               <>
                 {user && (
                   <Link 
-                    href={user.role === 'salesperson' ? "/dashboard" : "/customer-dashboard"} 
+                    href={user.unsafeMetadata.role === 'salesperson' ? "/dashboard" : "/customer-dashboard"} 
                     className="text-[#14144B] hover:text-[#00FF8C]"
                   >
                     Dashboard
@@ -33,7 +33,7 @@ export default function Navbar() {
                   About Us
                 </Link>
                 <div className="flex items-center gap-4">
-                  <span className="text-[#14144B]">{user.email}</span>
+                  <span className="text-[#14144B]">{user.emailAddresses[0].emailAddress}</span>
                    
                 </div>
               </>

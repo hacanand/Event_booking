@@ -7,13 +7,13 @@ import { Card } from '@/components/ui/card'
 import { Calendar, LinkIcon } from 'lucide-react'
 import { Steps } from './steps'
 import { motion, AnimatePresence } from 'framer-motion'
-import { CalendlyConnectionSuccess } from '../../components/calendly-connection-success'
-import { CelebrationModal } from '../../components/celebration-modal'
-import { useAuth } from '@/app/contexts/auth-context'
-
+import { useClerk } from '@clerk/nextjs'
+import { CalendlyConnectionSuccess } from './calendly-connection-success'
+import { CelebrationModal } from './celebration-modal'
+ 
 export function SalespersonOnboarding() {
   const router = useRouter()
-  const { user } = useAuth()
+  const { user } = useClerk()
   const [currentStep, setCurrentStep] = useState(1)
   const [calendlyConnected, setCalendlyConnected] = useState(false)
   const [googleCalendarConnected, setGoogleCalendarConnected] = useState(false)
