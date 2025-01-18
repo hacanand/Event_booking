@@ -1,44 +1,37 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useUser } from "@clerk/nextjs";
-import { SalespersonOnboarding } from "./components/salesperson-onboarding";
-import { CustomerOnboarding } from "./components/customer-onboarding";
-import { PageTransition } from "../components/page-transition";
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { useAuth } from '../contexts/auth-context'
+import { SalespersonOnboarding } from './components/salesperson-onboarding'
+import { CustomerOnboarding } from './components/customer-onboarding'
+import { PageTransition } from '../components/page-transition'
 
 export default function OnboardingPage() {
-  const router = useRouter();
-  const { user, isLoaded } = useUser();
-  const [userRole, setUserRole] = useState<"salesperson" | "customer" | null>(
-    null
-  );
+  const router = useRouter()
+  const { user } = useAuth()
+  const [userRole, setUserRole] = useState<'salesperson' | 'customer' | null>(null)
 
   useEffect(() => {
-    if (isLoaded) {
-      if (user) {
-        const role = user.publicMetadata.role as "salesperson" | "customer";
-        setUserRole(role);
-        if (role === "customer") {
-          router.push("/customer-dashboard");
-        }
-      } else {
-        router.push("/sign-in");
-      }
+    if (user) {
+      setUserRole(user.role)
+    } else {
+      router.push('/login')
     }
-  }, [user, isLoaded, router]);
+  }, [user, router])
 
-  if (!isLoaded || !userRole) {
-    return <div>Loading...</div>;
+  if (!userRole) {
+    return null // or a loading spinner
   }
 
   return (
     <PageTransition>
-      {userRole === "salesperson" ? (
+      {userRole === 'salesperson' ? (
         <SalespersonOnboarding />
       ) : (
         <CustomerOnboarding />
       )}
     </PageTransition>
-  );
+  )
 }
+

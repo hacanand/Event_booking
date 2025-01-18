@@ -1,175 +1,149 @@
-// "use client";
+'use client'
 
-// import { useEffect } from "react";
-// import { useRouter } from "next/navigation";
-// import {  useAuth, useUser } from "@clerk/nextjs";
-// import axiosInstance from "../utils/axiosInstance";
-// import { Loader } from "lucide-react";
-// import { isAllConnected } from "../actions/google-calendar/tokenData";
-// import { useToast } from "@/app/contexts/toast-context";
- 
+import { useEffect, useState } from 'react'
+import { useAuth } from '../contexts/auth-context'
+import { useRouter } from 'next/navigation'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { CalendarIcon, Clock, User, X } from 'lucide-react'
+import { Calendar } from '@/components/ui/calendar'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { PageTransition } from '../components/page-transition'
+import { motion, AnimatePresence } from 'framer-motion'
 
-// export default function DashboardPage() {
-//   const router = useRouter();
-//   const { user, isLoaded } = useUser();
-//   const {showToast} = useToast();
-//   const { userId } = useAuth();
-//   // const [loading, setLoading] = useState(true);
-
-// useEffect(() => {
-//   const updateUserRoleAndRedirect = async () => {
-//     if (!isLoaded || !user || !userId) return; // Ensure user data is fully loaded
-
-//     try {
-//       const localRole = localStorage.getItem("role");
-     
-//       if (user?.publicMetadata?.role && localRole !== user?.publicMetadata?.role) {
-//         showToast("Please Logout and Login with Valid role", "error");
-//         return <div>Please Logout and Login with Valid role </div>;
-//       }
-//       else {
-//          await axiosInstance.post("/api/clerk/role-assign", {
-//            userId: userId,
-//            role: localRole,
-//          });
-//       }
-//       if (user?.publicMetadata?.role === 'salesperson') {
-//         const isConnected = await isAllConnected({ clerkId: user.id });
-//         if (isConnected) {
-//           router.push("/salesperson-dashboard");
-//         }
-//         else {
-//           router.push("/connect-calendly");
-//         }
-//       }
-//       else {
-//         router.push("/customer-dashboard");
-//       }
-
-//     } catch (error) {
-//       console.error("Error during redirection:", error);
-//       router.push("/error"); // Fallback to error page on failure
-//     } 
-//   };
-
-//   updateUserRoleAndRedirect();
-// }, [userId, router]);
-
-//   if (!isLoaded) {
-//     return (
-//       <div className="flex items-center justify-center h-screen">
-//         <Loader size={48} className="animate-spin" />
-//       </div>
-//     );
-//   }
-
-//   return null; // The component does not render any visible UI after routing
-// }
-"use client";
-
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth, useUser } from "@clerk/nextjs";
-import axiosInstance from "../utils/axiosInstance";
-import { Loader } from "lucide-react";
-import { isAllConnected } from "../actions/google-calendar/tokenData";
-import { useToast } from "@/app/contexts/toast-context";
-
-interface PublicMetadata {
-  role?: string;
-}
-
-interface User {
-  id: string;
-  publicMetadata: PublicMetadata;
+interface Meeting {
+  id: string
+  customerName: string
+  date: string
+  time: string
 }
 
 export default function DashboardPage() {
-  const router = useRouter();
-  const { user, isLoaded } = useUser();
-  const { showToast } = useToast();
-  const { userId, signOut } = useAuth();
+  const { user } = useAuth()
+  const router = useRouter()
+  const [meetings, setMeetings] = useState<Meeting[]>([])
+  const [selectedMeeting, setSelectedMeeting] = useState<Meeting | null>(null)
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false)
 
   useEffect(() => {
-    const updateUserRoleAndRedirect = async () => {
-      if (!isLoaded || !user || !userId) return;
+    if (!user) {
+      router.push('/login')
+    } else {
+      const mockMeetings: Meeting[] = [
+        { id: '1', customerName: 'Alice Johnson', date: '2024-12-31', time: '10:00 AM' },
+        { id: '2', customerName: 'Bob Smith', date: '2025-01-02', time: '2:00 PM' },
+        { id: '3', customerName: 'Charlie Brown', date: '2025-01-03', time: '11:30 AM' },
+      ]
+      setMeetings(mockMeetings)
+    }
+  }, [user, router])
 
-      try {
-        let cachedRole= localStorage.getItem("role");
-        
-        // Cache the user's role if not already cached
-        if (!cachedRole && user.publicMetadata.role) {
-          
-          localStorage.setItem("role", user.publicMetadata.role as string)
-        }
-
-        // Handle role mismatch
-        if (
-          user.publicMetadata.role &&
-          cachedRole !== user.publicMetadata.role
-        ) {
-          showToast("Please Logout and Login with Valid role", "error");
-
-          // Clear localStorage and sign out the user
-          localStorage.clear();
-          await signOut();
-          return;
-        }
-
-        // Assign role if not cached
-        if (!cachedRole && user.publicMetadata.role) {
-          await axiosInstance.post("/api/clerk/role-assign", {
-            userId: userId,
-            role: user.publicMetadata.role,
-          });
-          await axiosInstance.post("/api/users", {
-            clerkId: userId,
-            userType: user.publicMetadata.role,
-            email: user.emailAddresses[0].emailAddress,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            profilePicture: user?.imageUrl,
-          });
-          localStorage.setItem("role", user.publicMetadata.role as string); // Cache the role
-        }
-
-        // Redirect based on role and connection status
-        if (cachedRole === "salesperson") {
-          let isConnected = localStorage.getItem("isConnected");
-
-          if (isConnected === null) {
-            // Fetch connection status if not cached
-            const connectionStatus: boolean = await isAllConnected({
-              clerkId: user.id,
-            });
-            isConnected = JSON.stringify(connectionStatus);
-            localStorage.setItem("isConnected", isConnected);
-          }
-
-          if (JSON.parse(isConnected)) {
-            router.push("/salesperson-dashboard");
-          } else {
-            router.push("/connect-calendly");
-          }
-        } else {
-          router.push("/customer-dashboard");
-        }
-      } catch (error) {
-        console.error("Error during redirection:", error);
-        router.push("/error"); // Fallback to error page on failure
-      }
-    };
-
-    updateUserRoleAndRedirect();
-  }, [isLoaded, user, userId, router, showToast]);
-
-  if (!isLoaded) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <Loader size={48} className="animate-spin" />
-      </div>
-    );
+  const handleViewDetails = (meeting: Meeting) => {
+    setSelectedMeeting(meeting)
+    setIsDetailsOpen(true)
   }
 
-  return null;
+  if (!user) return null
+
+  return (
+    <PageTransition>
+      <div className="min-h-screen bg-gray-50 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.h1
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-3xl font-bold text-[#14144B] mb-8"
+          >
+            Salesperson Dashboard
+          </motion.h1>
+          <Card>
+            <CardHeader>
+              <CardTitle>Scheduled Meetings</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {meetings.length === 0 ? (
+                <p className="text-gray-500">No meetings scheduled yet.</p>
+              ) : (
+                <motion.ul className="space-y-4">
+                  <AnimatePresence>
+                    {meetings.map((meeting, index) => (
+                      <motion.li
+                        key={meeting.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ delay: index * 0.1 }}
+                      >
+                        <Card>
+                          <CardContent className="flex items-center justify-between p-4">
+                            <div className="flex items-center space-x-4">
+                              <User className="h-6 w-6 text-[#14144B]" />
+                              <div>
+                                <p className="font-semibold text-[#14144B]">{meeting.customerName}</p>
+                                <div className="flex items-center space-x-2 text-sm text-gray-500">
+                                  <CalendarIcon className="h-4 w-4" />
+                                  <span>{meeting.date}</span>
+                                  <Clock className="h-4 w-4 ml-2" />
+                                  <span>{meeting.time}</span>
+                                </div>
+                              </div>
+                            </div>
+                            <Button variant="outline" onClick={() => handleViewDetails(meeting)}>View Details</Button>
+                          </CardContent>
+                        </Card>
+                      </motion.li>
+                    ))}
+                  </AnimatePresence>
+                </motion.ul>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Meeting Details</DialogTitle>
+          </DialogHeader>
+          {selectedMeeting && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="space-y-4"
+            >
+              <div>
+                <h3 className="font-semibold text-[#14144B]">Customer</h3>
+                <p>{selectedMeeting.customerName}</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-[#14144B] mb-2">Date and Time</h3>
+                <div className="flex items-center space-x-2">
+                  <CalendarIcon className="h-4 w-4 text-[#14144B]" />
+                  <span>{selectedMeeting.date}</span>
+                  <Clock className="h-4 w-4 ml-2 text-[#14144B]" />
+                  <span>{selectedMeeting.time}</span>
+                </div>
+              </div>
+              <div>
+                <h3 className="font-semibold text-[#14144B] mb-2">Calendar</h3>
+                <Calendar
+                  mode="single"
+                  selected={new Date(selectedMeeting.date)}
+                  className="rounded-md border"
+                />
+              </div>
+            </motion.div>
+          )}
+        </DialogContent>
+      </Dialog>
+    </PageTransition>
+  )
 }
+

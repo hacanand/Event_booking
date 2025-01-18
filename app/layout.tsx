@@ -1,32 +1,32 @@
 import { Inter } from 'next/font/google'
 import './globals.css'
+import { AnimatePresence } from 'framer-motion'
+import Navbar from '@/components/navbar'
+import { AuthProvider } from '@/components/auth-context'
 import { ClerkProvider } from '@clerk/nextjs'
-// import {dark, shadesOfPurple} from '@clerk/themes'
-import Navbar from './components/navbar'
-import { ToastProvider } from './contexts/toast-context'
- 
 
 const inter = Inter({ subsets: ['latin'] })
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
   return (
-    <ClerkProvider
-      afterSignOutUrl="/sign-in"
-    >
-      <html lang="en">
+    <html lang="en">
+      <ClerkProvider>
         <body className={inter.className}>
-          <ToastProvider>
-            <div className="flex flex-col min-h-screen">
+          <div className="flex flex-col min-h-screen">
+            <AuthProvider>
               <Navbar />
-              <main className="flex-grow">{children}</main>
-            </div>
-          </ToastProvider>
+              <AnimatePresence mode="wait">
+                <main className="flex-grow">{children}</main>
+              </AnimatePresence>
+            </AuthProvider>
+          </div>
         </body>
-      </html>
-    </ClerkProvider>
+      </ClerkProvider>
+    </html>
   );
 }
 

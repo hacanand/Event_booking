@@ -9,11 +9,11 @@ import { Steps } from './steps'
 import { motion, AnimatePresence } from 'framer-motion'
 import { CalendlyConnectionSuccess } from '../../components/calendly-connection-success'
 import { CelebrationModal } from '../../components/celebration-modal'
-import { useUser } from "@clerk/nextjs"
+import { useAuth } from '@/app/contexts/auth-context'
 
 export function SalespersonOnboarding() {
   const router = useRouter()
-  const { user } = useUser()
+  const { user } = useAuth()
   const [currentStep, setCurrentStep] = useState(1)
   const [calendlyConnected, setCalendlyConnected] = useState(false)
   const [googleCalendarConnected, setGoogleCalendarConnected] = useState(false)
