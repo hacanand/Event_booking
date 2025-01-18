@@ -35,7 +35,7 @@ export default function ConnectCalendlyPage() {
       // Handle the case where userId is missing
       setIsLoading(false);
       showToast("User authentication failed. Please log in.", "error");
-      router.push("/login"); // Redirect to login if necessary
+      router.push("/sign-in"); // Redirect to login if necessary
       return;
     }
 

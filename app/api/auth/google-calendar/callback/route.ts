@@ -60,7 +60,7 @@ export async function GET(req: Request) {
     await updateUserTokens(tokens);
 
     // Redirect to /customer-dashboard on success
-      return createRedirectResponse("/connect-google-calendar", {
+      return createRedirectResponse("/salesperson-dashboard", {
           response:"Google Calendar connected successfully.",
           status:"success"
   });

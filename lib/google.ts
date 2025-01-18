@@ -11,7 +11,7 @@ export function getGoogleAuthClient() {
   );
 }
 
-export function getGoogleAuthUrl() {
+export   function getGoogleAuthUrl() {
   const oauth2Client = getGoogleAuthClient();
   return oauth2Client.generateAuthUrl({
     access_type: "offline",
