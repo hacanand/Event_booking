@@ -2,53 +2,77 @@
 
 import * as React from "react"
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { DayPicker } from "react-day-picker"
 import { cn } from "@/lib/utils"
 
-export type CalendarProps = React.ComponentProps<typeof DayPicker>
+interface CalendarProps {
+  className?: string
+  selected?: Date
+  onSelect?: (date: Date) => void
+}
 
-function Calendar({
-  className,
-  classNames,
-  showOutsideDays = true,
-  ...props
-}: CalendarProps) {
+function Calendar({ className, selected, onSelect }: CalendarProps) {
+  const [currentMonth, setCurrentMonth] = React.useState(selected || new Date())
+
+  const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate()
+  const firstDayOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1).getDay()
+
+  const prevMonth = () => {
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1))
+  }
+
+  const nextMonth = () => {
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1))
+  }
+
+  const handleDateClick = (day: number) => {
+    const newDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day)
+    onSelect && onSelect(newDate)
+  }
+
   return (
-    <DayPicker
-      showOutsideDays={showOutsideDays}
-      className={cn("p-0", className)}
-      classNames={{
-        months: "w-full",
-        month: "space-y-4",
-        caption: "flex justify-center items-center h-10 relative",
-        caption_label: "text-base font-medium text-[#14144B]",
-        nav: "space-x-1 flex items-center",
-        nav_button: "flex items-center justify-center p-1 hover:bg-transparent text-[#14144B]",
-        nav_button_previous: "absolute top-1/2",
-        nav_button_next: "absolute top-1/2",
-        table: "w-full border-collapse",
-        head_row: "grid grid-cols-7",
-        head_cell: "text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]",
-        row: "grid grid-cols-7",
-        cell: "text-center text-sm p-0 relative [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
-        day: "h-9 w-9 p-0 font-normal aria-selected:opacity-100",
-        day_selected: "bg-transparent text-[#14144B] hover:bg-transparent hover:text-[#14144B]",
-        day_today: "bg-transparent text-[#14144B]",
-        day_outside: "text-muted-foreground opacity-50",
-        day_disabled: "text-muted-foreground opacity-50",
-        day_range_middle: "aria-selected:bg-transparent",
-        day_hidden: "invisible",
-        ...classNames,
-      }}
-      components={{
-        IconLeft: ({ ...props }) => <ChevronLeft className="h-4 w-4" />,
-        IconRight: ({ ...props }) => <ChevronRight className="h-4 w-4" />,
-      }}
-      {...props}
-    />
+    <div className={cn("p-3", className)}>
+      <div className="flex justify-between items-center mb-4">
+        <button onClick={prevMonth} className="p-1 rounded-full hover:bg-gray-200">
+          <ChevronLeft className="h-4 w-4" />
+        </button>
+        <div className="text-lg font-semibold">
+          {currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' })}
+        </div>
+        <button onClick={nextMonth} className="p-1 rounded-full hover:bg-gray-200">
+          <ChevronRight className="h-4 w-4" />
+        </button>
+      </div>
+      <div className="grid grid-cols-7 gap-1">
+        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+          <div key={day} className="text-center font-medium text-sm py-1">
+            {day}
+          </div>
+        ))}
+        {Array.from({ length: firstDayOfMonth }).map((_, index) => (
+          <div key={`empty-${index}`} />
+        ))}
+        {Array.from({ length: daysInMonth }).map((_, index) => {
+          const day = index + 1
+          const isSelected = selected?.getDate() === day && 
+                             selected?.getMonth() === currentMonth.getMonth() && 
+                             selected?.getFullYear() === currentMonth.getFullYear()
+          return (
+            <button
+              key={day}
+              onClick={() => handleDateClick(day)}
+              className={cn(
+                "text-center py-1 rounded-full hover:bg-[#00FF8C]/10",
+                isSelected && "bg-[#00FF8C] text-[#14144B]"
+              )}
+            >
+              {day}
+            </button>
+          )
+        })}
+      </div>
+    </div>
   )
 }
-Calendar.displayName = "Calendar"
 
 export { Calendar }
 

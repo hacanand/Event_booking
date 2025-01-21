@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
- 
+import { useAuth } from '@/app/contexts/auth-context'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Calendar } from '@/components/ui/calendar'
@@ -13,14 +13,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-
-import { useClerk } from '@clerk/nextjs'
-import { useToast } from '@/hooks/use-toast'
+import { toast } from '@/components/ui/use-toast'
 
 export default function SchedulePage({ params }: { params: { salesId: string } }) {
   const router = useRouter()
-  const { user } = useClerk()
-  const {toast}=useToast()
+  const { user } = useAuth()
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
   const [selectedTime, setSelectedTime] = useState<string | undefined>(undefined)
 
@@ -57,7 +54,7 @@ export default function SchedulePage({ params }: { params: { salesId: string } }
   }
 
   if (!user) {
-    router.push('/sign-in')
+    router.push('/login')
     return null
   }
 

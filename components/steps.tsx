@@ -1,3 +1,5 @@
+import { cn } from "@/lib/utils"
+
 interface Step {
   id: number
   title: string
@@ -18,18 +20,18 @@ export function Steps({ steps, currentStep }: StepsProps) {
         {steps.map((step) => (
           <li key={step.id} className="flex flex-col items-center relative">
             <div
-              className={`${
-                step.id <= currentStep
-                  ? 'bg-[#00FF8C] text-[#14144B]'
-                  : 'bg-gray-200 text-gray-500'
-              } h-10 w-10 rounded-full flex items-center justify-center z-10`}
+              className={cn(
+                "h-10 w-10 rounded-full flex items-center justify-center z-10",
+                step.id <= currentStep ? "bg-[#00FF8C] text-[#14144B]" : "bg-gray-200 text-gray-500",
+              )}
             >
               {step.id}
             </div>
-            <span 
-              className={`absolute top-14 text-xs font-medium text-center w-20 ${
-                step.id <= currentStep ? 'text-[#14144B]' : 'text-gray-500'
-              }`}
+            <span
+              className={cn(
+                "absolute top-14 text-xs font-medium text-center w-20",
+                step.id <= currentStep ? "text-[#14144B]" : "text-gray-500",
+              )}
             >
               {step.title}
             </span>

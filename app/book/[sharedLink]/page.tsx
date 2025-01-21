@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useAuth } from '@/app/contexts/auth-context'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Calendar } from '@/components/ui/calendar'
@@ -12,17 +13,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
- 
+import { toast } from '@/components/ui/use-toast'
+import { PageTransition } from '@/app/components/page-transition'
 import { motion, AnimatePresence } from 'framer-motion'
 import { CheckCircle } from 'lucide-react'
-import { PageTransition } from '@/components/page-transition'
-import { useClerk } from '@clerk/nextjs'
-import { useToast } from '@/hooks/use-toast'
 
 export default function CustomerBookingPage({ params }: { params: { sharedLink: string } }) {
   const router = useRouter()
-  const { user } = useClerk()
-  const { toast } = useToast()
+  const { user } = useAuth()
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
   const [selectedTime, setSelectedTime] = useState<string | undefined>(undefined)
   const [isBooked, setIsBooked] = useState(false)
@@ -60,7 +58,7 @@ export default function CustomerBookingPage({ params }: { params: { sharedLink: 
   }
 
   if (!user) {
-    router.push('/sign-in')
+    router.push('/login')
     return null
   }
 
