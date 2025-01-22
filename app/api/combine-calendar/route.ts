@@ -42,6 +42,7 @@ const fetchCalendlyEvents = async (): Promise<CalendlyEvent[]> => {
     });
 
   return response.data.collection.map((event: any) => ({
+    id: event.id,
     uri: event.uri,
     name: event.name,
     start_time: event.start_time,

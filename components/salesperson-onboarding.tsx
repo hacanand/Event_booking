@@ -1,5 +1,4 @@
 "use client"
-
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -7,13 +6,13 @@ import { Card } from "@/components/ui/card"
 import { Calendar, LinkIcon } from "lucide-react"
 import { Steps } from "./steps"
 import { motion, AnimatePresence } from "framer-motion"
-import { CalendlyConnectionSuccess } from "./calendly-connection-success"
 import { CelebrationModal } from "./celebration-modal"
-import { useAuth } from "@/app/contexts/auth-context"
+import { useUser } from "@clerk/nextjs"
+import CalendlyConnectionSuccess from "@/app/salesperson/onboarding/calendly-connection-success/page"
 
 export function SalespersonOnboarding() {
   const router = useRouter()
-  const { user } = useAuth()
+  const { user } = useUser()
   const [currentStep, setCurrentStep] = useState(1)
   const [calendlyConnected, setCalendlyConnected] = useState(false)
   const [googleCalendarConnected, setGoogleCalendarConnected] = useState(false)
@@ -100,7 +99,7 @@ export function SalespersonOnboarding() {
                 </div>
               )}
 
-              {currentStep === 1 && calendlyConnected && <CalendlyConnectionSuccess onContinue={handleNextStep} />}
+              {currentStep === 1 && calendlyConnected && <CalendlyConnectionSuccess />}
 
               {currentStep === 2 && (
                 <div className="space-y-4">

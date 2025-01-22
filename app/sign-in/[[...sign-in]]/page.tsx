@@ -6,13 +6,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
-// import axiosInstance from "@/app/utils/axiosInstance";
-
 export default function LoginPage() {
   const [role, setRole] = useState<string>("");
   const router = useRouter();
   const { isSignedIn, isLoaded, user } = useUser();
   // const { userId } = useAuth();
+
     useEffect(() => {
       localStorage.setItem('role', role);
       if (isSignedIn && isLoaded) {
@@ -51,8 +50,8 @@ export default function LoginPage() {
               }
             >
               <TabsList className="grid w-full grid-cols-2 mb-6">
-                <TabsTrigger value="customer">Customer</TabsTrigger>
-                <TabsTrigger value="salesperson">Salesperson</TabsTrigger>
+                <TabsTrigger key="customer" value="customer">Customer</TabsTrigger>
+                <TabsTrigger key="salesperson" value="salesperson">Salesperson</TabsTrigger>
               </TabsList>
               <TabsContent value="customer">
                 <SignIn
