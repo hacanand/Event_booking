@@ -1,9 +1,8 @@
+'use server'
 import { google } from "googleapis";
-import { getCalendlyAuthUrl } from "./calendly";
-import {CalendarConnect} from "@/app/onboarding/components/calendar-connect"; // Adjust the path as necessary
 const SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"];
 
-export function getGoogleAuthClient() {
+export async function getGoogleAuthClient() {
   return new google.auth.OAuth2(
     process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
     process.env.GOOGLE_CLIENT_SECRET!,
@@ -11,9 +10,9 @@ export function getGoogleAuthClient() {
   );
 }
 
-export   function getGoogleAuthUrl() {
+export async function getGoogleAuthUrl() {
   const oauth2Client = getGoogleAuthClient();
-  return oauth2Client.generateAuthUrl({
+  return (await oauth2Client).generateAuthUrl({
     access_type: "offline",
     prompt: "consent",
     scope: SCOPES,
@@ -23,7 +22,7 @@ export   function getGoogleAuthUrl() {
 export async function setCredentialsRefreshToken(req: any) {
   const oauth2Client = getGoogleAuthClient();
   const refreshToken = await req.cookies["google-refresh-token"];
-  oauth2Client.setCredentials({ refresh_token: refreshToken });
+  (await oauth2Client).setCredentials({ refresh_token: refreshToken });
   return oauth2Client;
 }
 

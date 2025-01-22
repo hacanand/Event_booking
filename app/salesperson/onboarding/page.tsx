@@ -2,16 +2,17 @@
 
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { useAuth } from "@/components/auth-context"
+import { useClerk } from "@clerk/nextjs"
+ 
  
 
 export default function SalespersonOnboardingPage() {
   const router = useRouter()
-  const { user } = useAuth()
+  const { user } = useClerk()
 
   useEffect(() => {
-    if (!user || user.role !== "salesperson") {
-      router.push("/login")
+    if (!user || user.unsafeMetadata.role !== "salesperson") {
+      router.push("/sign-in")
     } else {
       router.push("/salesperson/onboarding/connect-calendly")
     }

@@ -1,15 +1,17 @@
 "use client"
 
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
  
 import { motion } from "framer-motion"
 import { Steps } from "@/components/steps"
+import { useEffect } from "react"
+import { useToast } from "@/hooks/use-toast"
 
 export default function CheckConnectionPage() {
   const router = useRouter()
-
+const { toast } = useToast();
   const steps = [
     { id: 1, title: "Connect Calendly" },
     { id: 2, title: "Check Connection" },
@@ -20,6 +22,22 @@ export default function CheckConnectionPage() {
   const handleNextStep = () => {
     router.push("/salesperson/onboarding/connect-google-calendar")
   }
+
+    const searchParams = useSearchParams();
+    const title = searchParams.get('title');
+    const description = searchParams.get('description');
+    const variant = searchParams.get('variant') as "default" | "destructive" | null | undefined;
+  // console.log(title, description, variant)
+    useEffect(() => {
+      if (!title || !description || !variant) {
+        toast({
+          title: title!,
+          description: description!,
+          variant: variant!,
+        });
+      }
+    }, [router, title, description, variant]);
+  
 
   return (
     <div className="min-h-screen bg-gray-50 py-12">

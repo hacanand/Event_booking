@@ -5,6 +5,7 @@ import { updateGoogleCalendarToken } from "@/app/actions/google-calendar/tokenDa
 import { currentUser } from "@clerk/nextjs/server";
 import { createRedirectResponse } from "@/lib/redirectHelper";
 import { Credentials } from "google-auth-library";
+import { title } from "process";
 // Handle token exchange
 
 async function exchangeAuthorizationCode(code: string) {
@@ -38,10 +39,14 @@ export async function GET(req: Request) {
   const code = url.searchParams.get("code");
 
   if (!code) {
-    return createRedirectResponse("/connect-google-calendar", {
-      response: "Authorization code not found.",
-      status: "error",
-    });
+    return createRedirectResponse(
+      "/salesperson/onboarding/connect-google-calendar",
+      {
+        title: "Code is not valid",
+        description: "Please try again.",
+        variant: "destructive",
+      }
+    );
   }
 
   try {
@@ -49,10 +54,14 @@ export async function GET(req: Request) {
     const tokens = await exchangeAuthorizationCode(code);
 
     if (!tokens) {
-      return createRedirectResponse("/connect-google-calendar", {
-        response: "Failed to fetch tokens.",
-        status: "error",
-      });
+      return createRedirectResponse(
+        "/salesperson/onboarding/connect-google-calendar",
+        {
+          title: "Failed to exchange code for tokens",
+          description: "Please try again.",
+          variant: "destructive",
+        }
+      );
     }
 
     // Save tokens and update user data
@@ -60,17 +69,23 @@ export async function GET(req: Request) {
     await updateUserTokens(tokens);
 
     // Redirect to /customer-dashboard on success
-      return createRedirectResponse("/salesperson-dashboard", {
-          response:"Google Calendar connected successfully.",
-          status:"success"
-  });
+      return createRedirectResponse("/salesperson/onboarding/share-link", {
+        title: "Google Calendar connected successfully",
+        description:
+          "You can now share your Calendly link with your customers.",
+        variant: "default",
+      });
   } catch (error: any) {
     console.error("Error in Google Calendar callback:", error);
 
     // Redirect to /connect-google-calendar on any error
-      return createRedirectResponse("/connect-google-calendar", {
-          response:error.message || "An unknown error occurred.",
-         status: "error"
-   } );
+      return createRedirectResponse(
+        "/salesperson/onboarding/connect-google-calendar",
+        {
+          title: "Failed to connect Google Calendar",
+          description: "Please try again.",
+          variant: "destructive",
+        }
+      );
   }
 }

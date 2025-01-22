@@ -1,42 +1,81 @@
+'use client'
 import { motion } from "framer-motion";
 import { CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import router, { useRouter } from "next/navigation";
- 
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { Card } from "@/components/ui/card";
+import { Steps } from "@/components/steps";
 
-export function CalendlyConnectionSuccess( ) {
-    const router = useRouter()
-    function handleNext() {
-       router.push("/salesperson/onboarding/check-connection");
+export default function CalendlyConnectionSuccess() {
+  const router = useRouter();
+  const { toast } = useToast();
+
+  function handleNext() {
+    router.push("/salesperson/onboarding/check-connection");
+  }
+
+  // Get response query parameter from URL
+  const searchParams = useSearchParams();
+  const title = searchParams.get('title');
+  const description = searchParams.get('description');
+  const variant = searchParams.get('variant') as "default" | "destructive" | null | undefined;
+console.log(title, description, variant)
+  useEffect(() => {
+    if (!title || !description || !variant) {
+      toast({
+        title: title!,
+        description: description!,
+        variant: variant!,
+      });
     }
+  }, [router, title, description, variant]);
+
+  const steps = [
+    { id: 1, title: "Connect Calendly" },
+    { id: 2, title: "Check Connection" },
+    { id: 3, title: "Connect Google Calendar" },
+    { id: 4, title: "Share Link" },
+  ];
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="text-center space-y-6"
-    >
-      <motion.div
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{ type: "spring", stiffness: 260, damping: 20 }}
-      >
-        <CheckCircle className="w-24 h-24 text-green-500 mx-auto" />
-      </motion.div>
-      <h2 className="text-2xl font-bold text-[#14144B]">
-        Calendly Connected Successfully!
-      </h2>
-      <p className="text-gray-500">
-        Your Calendly account has been successfully connected. You can now
-        manage your appointments and schedule meetings effortlessly.
-      </p>
-      <Button
-        onClick={handleNext}
-        className="w-full bg-[#00FF8C] text-[#14144B] hover:bg-[#00FF8C]/90"
-      >
-        Continue to Next Step
-      </Button>
-    </motion.div>
+    <div className="min-h-screen bg-gray-50 py-12">
+      <div className="max-w-3xl mx-auto px-4">
+        <Card className="p-8">
+          <div className="mb-12">
+            <Steps steps={steps} currentStep={1} />
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="space-y-6 text-center"
+          >
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 260, damping: 20 }}
+            >
+              <CheckCircle className="w-24 h-24 text-green-500 mx-auto" />
+            </motion.div>
+            <h2 className="text-2xl font-bold text-[#14144B]">
+              Calendly Connected Successfully!
+            </h2>
+            <p className="text-gray-500">
+              Your Calendly account has been successfully connected. You can now
+              manage your appointments and schedule meetings effortlessly.
+            </p>
+            <Button
+              onClick={handleNext}
+              className="w-full bg-[#00FF8C] text-[#14144B] hover:bg-[#00FF8C]/90"
+            >
+              Continue to Next Step
+            </Button>
+          </motion.div>
+        </Card>
+      </div>
+    </div>
   );
 }

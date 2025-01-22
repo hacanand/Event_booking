@@ -13,8 +13,8 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useAuth } from '@/components/auth-context'
 import { PageTransition } from '@/components/page-transition'
+import { useClerk } from '@clerk/nextjs'
 
 interface Meeting {
   id: string
@@ -24,7 +24,7 @@ interface Meeting {
 }
 
 export default function DashboardPage() {
-  const { user } = useAuth()
+  const { user } = useClerk()
   const router = useRouter()
   const [meetings, setMeetings] = useState<Meeting[]>([])
   const [selectedMeeting, setSelectedMeeting] = useState<Meeting | null>(null)
@@ -32,7 +32,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (!user) {
-      router.push('/login')
+      router.push("/sign-in");
     } else {
       const mockMeetings: Meeting[] = [
         { id: '1', customerName: 'Alice Johnson', date: '2024-12-31', time: '10:00 AM' },

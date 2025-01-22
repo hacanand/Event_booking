@@ -18,7 +18,7 @@ import {
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { PageTransition } from '@/components/page-transition'
-import { useAuth } from '@/components/auth-context'
+ 
 
 interface Meeting {
   id: string
@@ -34,31 +34,8 @@ export default function CustomerDashboardPage() {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false)
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
 
-  let user;
-  try {
-    const { user: authUser } = useAuth()
-    user = authUser
-  } catch (error) {
-    console.error("Auth context not available:", error)
-    useEffect(() => {
-      router.push('/login')
-    }, [router])
-    return null
-  }
-
-  useEffect(() => {
-    if (!user) {
-      router.push('/login')
-    } else {
-      const mockMeetings: Meeting[] = [
-        { id: '1', salespersonName: 'John Doe', date: '2024-12-31', time: '10:00 AM' },
-        { id: '2', salespersonName: 'Jane Smith', date: '2025-01-02', time: '2:00 PM' },
-        { id: '3', salespersonName: 'Mike Johnson', date: '2025-01-03', time: '11:30 AM' },
-      ]
-      const storedMeetings = JSON.parse(localStorage.getItem('customerMeetings') || '[]')
-      setMeetings([...mockMeetings, ...storedMeetings])
-    }
-  }, [user, router])
+ 
+ 
 
   const handleDateSelect = (date: Date | undefined) => {
     setSelectedDate(date)
@@ -77,7 +54,7 @@ export default function CustomerDashboardPage() {
     localStorage.setItem('customerMeetings', JSON.stringify(updatedStoredMeetings))
   }
 
-  if (!user) return null
+ 
 
   return (
     <PageTransition>

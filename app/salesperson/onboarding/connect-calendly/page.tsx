@@ -10,7 +10,8 @@ import { motion } from "framer-motion"
  
 import { Steps } from "@/components/steps"
 import { getCalendlyAuthUrl } from "@/lib/calendly"
-import { CalendlyConnectionSuccess } from "../calendly-connection-success/page"
+import CalendlyConnectionSuccess from "../calendly-connection-success/page"
+ 
  
 
 export default function ConnectCalendlyPage() {

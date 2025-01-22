@@ -4,10 +4,13 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { LogOut } from 'lucide-react'
-import { useAuth } from './auth-context'
+import {  useClerk, useUser } from '@clerk/nextjs'
+ 
+// import { useAuth } from './auth-context'
 
 export default function Navbar() {
-  const { user, logout } = useAuth()
+  const { user } = useUser()
+  const { signOut } = useClerk()
   
   return (
     <nav className="sticky top-0 z-10 border-b bg-white shadow-sm">
@@ -30,7 +33,7 @@ export default function Navbar() {
               <>
                 {user && (
                   <Link 
-                    href={user.role === 'salesperson' ? "/dashboard" : "/customer-dashboard"} 
+                    href={user.unsafeMetadata.role === 'salesperson' ? "/dashboard" : "/customer-dashboard"} 
                     className="text-[#14144B] hover:text-[#00FF8C]"
                   >
                     Dashboard
@@ -40,13 +43,16 @@ export default function Navbar() {
                   About Us
                 </Link>
                 <div className="flex items-center gap-4">
-                  <span className="text-[#14144B]">{user.email}</span>
+                  <span className="text-[#14144B]">{user.emailAddresses[0].emailAddress}</span>
                   <Button 
                     variant="ghost" 
                     size="icon"
                     onClick={() => {
-                      logout()
-                      window.location.href = '/login'
+                      localStorage.clear()
+                      //sign out clerk
+                      signOut()
+
+                      window.location.href = '/sign-in'
                     }}
                     className="text-[#14144B] hover:text-[#00FF8C]"
                   >
@@ -56,7 +62,7 @@ export default function Navbar() {
               </>
             ) : (
               <Button asChild className="bg-[#00FF8C] text-[#14144B] hover:bg-[#00FF8C]/90">
-                <Link href="/login">Login</Link>
+                <Link href="/sign-in">Login</Link>
               </Button>
             )}
           </div>

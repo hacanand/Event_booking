@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { SignIn, useAuth } from "@clerk/nextjs";
+import { SignIn} from "@clerk/nextjs";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -11,18 +11,18 @@ import { useUser } from "@clerk/nextjs";
 export default function LoginPage() {
   const [role, setRole] = useState<string>("");
   const router = useRouter();
-  const { isSignedIn, user } = useUser();
-  const { userId } = useAuth();
+  const { isSignedIn, isLoaded, user } = useUser();
+  // const { userId } = useAuth();
     useEffect(() => {
       localStorage.setItem('role', role);
-      if (isSignedIn && user) {
-        if (user.unsafeMetadata.role === 'salesperson') {
-          router.push('/salesperson-dashboard');
+      if (isSignedIn && isLoaded) {
+        if (user?.unsafeMetadata?.role === 'salesperson') {
+          router.push('/salesperson/dashboard');
         } else {
           router.push('/customer-dashboard');
         }
       }
-    }, [userId, user, router]);
+    }, [ user, router]);
 
   return (
     <div className="min-h-screen bg-white flex flex-col justify-center py-12 sm:px-6 lg:px-8">

@@ -6,14 +6,15 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { LinkIcon } from "lucide-react"
 import { motion } from "framer-motion"
-import { useAuth } from "@/components/auth-context"
+// import { useAuth } from "@/components/auth-context"
 import { Steps } from "@/components/steps"
 import { CelebrationModal } from "@/components/celebration-modal"
+import { useUser } from "@clerk/nextjs"
  
 
 export default function ShareLinkPage() {
   const router = useRouter()
-  const { user } = useAuth()
+  const { user } = useUser()
   const [showCelebration, setShowCelebration] = useState(false)
   const [sharedLink, setSharedLink] = useState("")
 
@@ -25,8 +26,8 @@ export default function ShareLinkPage() {
   ]
 
   useEffect(() => {
-    if (user) {
-      setSharedLink(`${window.location.origin}/book/${user?.id || ""}`)
+    if (user && user.id) {
+      setSharedLink(`${window.location.origin}/book/${user.id}`)
     }
   }, [user])
 

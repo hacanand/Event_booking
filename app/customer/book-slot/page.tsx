@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuth } from '@/app/contexts/auth-context'
+ 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Calendar } from '@/components/ui/calendar'
@@ -13,15 +13,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { toast } from '@/components/ui/use-toast'
-import { PageTransition } from '@/app/components/page-transition'
+ 
+ 
 import { motion, AnimatePresence } from 'framer-motion'
 import { CheckCircle, CalendarIcon, Clock } from 'lucide-react'
 import { Input } from "@/components/ui/input"
+import { useToast } from '@/hooks/use-toast'
+// import { useAuth } from '@/components/auth-context'
+import { PageTransition } from '@/components/page-transition'
+import { useUser } from '@clerk/nextjs'
 
 export default function BookSlotPage() {
   const router = useRouter()
-  const { user } = useAuth()
+  const { user } = useUser()
+  const {toast}=useToast()
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
   const [selectedTime, setSelectedTime] = useState<string | undefined>(undefined)
   const [salespersonName, setSalespersonName] = useState('')
@@ -62,7 +67,7 @@ export default function BookSlotPage() {
   }
 
   if (!user) {
-    router.push('/login')
+    router.push("/sign-in");
     return null
   }
 
