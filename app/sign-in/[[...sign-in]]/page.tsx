@@ -1,32 +1,37 @@
 "use client";
 import { useState, useEffect } from "react";
-import { SignIn} from "@clerk/nextjs";
+import { SignIn } from "@clerk/nextjs";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
-export default function LoginPage() {
-  const [role, setRole] = useState<string>("");
-  const router = useRouter();
-  const { isSignedIn, isLoaded, user } = useUser();
-  // const { userId } = useAuth();
 
-    useEffect(() => {
-      localStorage.setItem('role', role);
-      if (isSignedIn && isLoaded) {
-        if (user?.unsafeMetadata?.role === 'salesperson') {
-          router.push('/salesperson/dashboard');
-        } else {
-          router.push('/customer-dashboard');
-        }
+export default function LoginPage() {
+  const [role, setRole] = useState<string>("customer"); // Default to "customer"
+  const router = useRouter();
+  const { isSignedIn, isLoaded } = useUser();
+
+  // Update localStorage when role changes
+  useEffect(() => {
+    localStorage.setItem("role", role);
+  }, [role]);
+
+  useEffect(() => {
+    if (isSignedIn && isLoaded) {
+      const storedRole = localStorage.getItem("role");
+      if (storedRole === "salesperson") {
+        router.push("/salesperson/onboarding");
+      } else {
+        router.push("/customer-dashboard");
       }
-    }, []);
-    console.log(role)
+    }
+  }, [isSignedIn, isLoaded]);
+
   return (
     <div className="min-h-screen bg-white flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-         <Image
+        <Image
           src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/hiipitch-nSS262YxQ47CjsI2Du1QfvET8Ik6l6.png"
           alt="hiipitch logo"
           width={120}
@@ -42,7 +47,7 @@ export default function LoginPage() {
         <Card className="bg-white shadow-lg">
           <CardContent className="pt-6">
             <Tabs
-              // defaultValue="customer"
+              defaultValue="customer"
               className="w-full"
               onValueChange={(value) =>
                 setRole(value as "salesperson" | "customer")
@@ -57,11 +62,10 @@ export default function LoginPage() {
                 </TabsTrigger>
               </TabsList>
               <TabsContent value="customer">
-                {/* <SignIn
+                <SignIn
                   path="/sign-in"
                   routing="path"
-                  signInUrl="/sign-in"
-                  fallbackRedirectUrl="/customer-dashboard" // Fallback redirect
+                  fallbackRedirectUrl="/customer-dashboard"
                   appearance={{
                     elements: {
                       formButtonPrimary:
@@ -76,14 +80,13 @@ export default function LoginPage() {
                         "text-[#00FF8C] hover:text-[#00FF8C]/90",
                     },
                   }}
-                /> */}
+                />
               </TabsContent>
               <TabsContent value="salesperson">
                 <SignIn
                   path="/sign-in"
                   routing="path"
-                  signInUrl="/sign-in"
-                  fallbackRedirectUrl="/salesperson/onboarding" // Fallback redirect
+                  fallbackRedirectUrl="/salesperson/onboarding"
                   appearance={{
                     elements: {
                       formButtonPrimary:
@@ -107,4 +110,3 @@ export default function LoginPage() {
     </div>
   );
 }
- 

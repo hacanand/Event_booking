@@ -42,31 +42,10 @@ export default function Navbar() {
               unoptimized // Added because we're using an external URL
             />
           </Link>
-
           <div className="flex items-center gap-6">
-            {user ? (
-              <>
-                {user && (
-                  <Link
-                    href={
-                      user.unsafeMetadata.role === "salesperson"
-                        ? "/dashboard"
-                        : "/customer-dashboard"
-                    }
-                    className="text-[#14144B] hover:text-[#00FF8C]"
-                  >
-                    Dashboard
-                  </Link>
-                )}
-                <Link
-                  href="/about"
-                  className="text-[#14144B] hover:text-[#00FF8C]"
-                >
-                  About Us
-                </Link>
                 <div className="flex items-center gap-4">
                   <span className="text-[#14144B]">
-                    {user.emailAddresses[0].emailAddress}
+                    {user?.emailAddresses[0].emailAddress}
                   </span>
                   <Button
                     variant="ghost"
@@ -84,10 +63,6 @@ export default function Navbar() {
                     )}
                   </Button>
                 </div>
-              </>
-            ) : (
-               ""
-            )}
           </div>
         </div>
       </div>

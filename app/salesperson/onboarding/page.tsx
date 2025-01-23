@@ -2,56 +2,64 @@
 
 import { useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { useClerk, useUser } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 import axiosInstance from "@/app/utils/axiosInstance";
 
 export default function SalespersonOnboardingPage() {
   const router = useRouter();
-  const { isSignedIn, isLoaded,user } = useUser();
+  const { isSignedIn, isLoaded, user } = useUser();
 
   const updateUserData = useCallback(async () => {
-    if (!isLoaded || !isSignedIn || !user) return;
+    const role = localStorage.getItem("role");
 
-    // const role = localStorage.getItem("role");
-    // if (!role) {
-    //   router.push("/sign-in");
-    //   return;
-    // }
+    if (!user) {
+      console.error("User is not defined");
+      return;
+    }
 
     try {
+      // Update Clerk user metadata
       await user.update({
         unsafeMetadata: {
-          role:'salesperson',
+          role: role,
         },
       });
+
+      // Send data to your backend
       await axiosInstance.post("/api/users", {
         clerkId: user.id,
-        userType: 'salesperson',
+        userType: role,
         email: user.emailAddresses[0]?.emailAddress,
         firstName: user.firstName,
         lastName: user.lastName,
         profilePicture: user.imageUrl,
       });
+
       console.log("User data updated successfully");
     } catch (error) {
       console.error("Error updating user data:", error);
     }
-  }, [isLoaded, isSignedIn, user, router]);
+  }, [user]);
 
   useEffect(() => {
-    if (!isLoaded || !isSignedIn) {
-      router.push("/sign-in");
-      return;
-    }
+    const handleRouting = async () => {
+      if (isSignedIn && isLoaded && user) {
+        await updateUserData();
 
-    if (user?.unsafeMetadata.role !== "salesperson") {
-      router.push("/sign-in");
-      return;
-    }
+        const updatedRole =
+          user.unsafeMetadata.role || localStorage.getItem("role");
+        if (updatedRole === "salesperson") {
+          router.push("/salesperson/onboarding/connect-calendly");
+        } else if (updatedRole === "customer") {
+          router.push("/customer-dashboard");
+        } else {
+          console.error("Invalid role:", updatedRole);
+        }
+      }
+    };
 
-    updateUserData();
-    router.push("/salesperson/onboarding/connect-calendly");
-  }, [isLoaded, isSignedIn, user, router]);
+    handleRouting();
+  }, [isLoaded, isSignedIn, user, router, updateUserData]);
 
   return null;
 }

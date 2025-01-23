@@ -36,26 +36,26 @@ export async function GET(req: Request) {
     //   access_token: res?.access_token,
     //   refresh_token: res?.refresh_token,
     // });
-    // const user = await currentUser();
+    const user = await currentUser();
 
-    // if (!user?.id) {
-    //   return createRedirectResponse(
-    //     "/salesperson/onboarding/connect-calendly",
-    //     {
-    //       title: "User not found",
-    //       description: "Please try again.",
-    //       variant: "destructive",
-    //     }
-    //   );
-    // }
+    if (!user?.id) {
+      return createRedirectResponse(
+        "/salesperson/onboarding/connect-calendly",
+        {
+          title: "User not found",
+          description: "Please try again.",
+          variant: "destructive",
+        }
+      );
+    }
 
     // Save token and user data
 
-    // await createToken(user.id, res?.refresh_token);
-    // const response = await saveCalendlyUserAndUrlData(
-    //   user.id,
-    //   res.access_token
-    // );
+    await createToken(user.id, res?.refresh_token);
+    const response = await saveCalendlyUserAndUrlData(
+      user.id,
+      res.access_token
+    );
 
     // Register Calendly webhook
     // await registerCalendlyWebhook(
