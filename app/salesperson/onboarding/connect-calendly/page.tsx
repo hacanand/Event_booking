@@ -27,12 +27,11 @@ export default function ConnectCalendlyPage() {
   ]
 
   const handleCalendlyConnection = () => {
-    
       router.push(getCalendlyAuthUrl());
     }
-  const handleNextStep = () => {
-    router.push("/salesperson/onboarding/check-connection")
-  }
+  // const handleNextStep = () => {
+  //   router.push("/salesperson/onboarding/check-connection")
+  // }
 
   return (
     <div className="min-h-screen bg-gray-50 py-12">

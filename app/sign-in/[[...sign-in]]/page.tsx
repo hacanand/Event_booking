@@ -21,12 +21,12 @@ export default function LoginPage() {
           router.push('/customer-dashboard');
         }
       }
-    }, [ user, router]);
-
+    }, []);
+    console.log(role)
   return (
     <div className="min-h-screen bg-white flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <Image
+         <Image
           src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/hiipitch-nSS262YxQ47CjsI2Du1QfvET8Ik6l6.png"
           alt="hiipitch logo"
           width={120}
@@ -38,7 +38,6 @@ export default function LoginPage() {
           Sign in to your account
         </h2>
       </div>
-
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <Card className="bg-white shadow-lg">
           <CardContent className="pt-6">
@@ -50,11 +49,15 @@ export default function LoginPage() {
               }
             >
               <TabsList className="grid w-full grid-cols-2 mb-6">
-                <TabsTrigger key="customer" value="customer">Customer</TabsTrigger>
-                <TabsTrigger key="salesperson" value="salesperson">Salesperson</TabsTrigger>
+                <TabsTrigger key="customer" value="customer">
+                  Customer
+                </TabsTrigger>
+                <TabsTrigger key="salesperson" value="salesperson">
+                  Salesperson
+                </TabsTrigger>
               </TabsList>
               <TabsContent value="customer">
-                <SignIn
+                {/* <SignIn
                   path="/sign-in"
                   routing="path"
                   signInUrl="/sign-in"
@@ -73,14 +76,14 @@ export default function LoginPage() {
                         "text-[#00FF8C] hover:text-[#00FF8C]/90",
                     },
                   }}
-                />
+                /> */}
               </TabsContent>
               <TabsContent value="salesperson">
                 <SignIn
                   path="/sign-in"
                   routing="path"
                   signInUrl="/sign-in"
-                  fallbackRedirectUrl="/onboarding" // Fallback redirect
+                  fallbackRedirectUrl="/salesperson/onboarding" // Fallback redirect
                   appearance={{
                     elements: {
                       formButtonPrimary:
@@ -104,3 +107,4 @@ export default function LoginPage() {
     </div>
   );
 }
+ 
