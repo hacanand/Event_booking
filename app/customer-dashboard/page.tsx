@@ -1,20 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
+import { useCallback, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { CalendarIcon, Clock, User } from "lucide-react";
+import { PopupButton } from "react-calendly";
+import { CalendarIcon } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
+import axiosInstance from "../utils/axiosInstance";
 
 const fadeIn = {
   hidden: { opacity: 0, y: -20 },
@@ -28,50 +21,54 @@ interface Meeting {
   time: string;
 }
 
-export default function CustomerDashboardPage() {
-  if (typeof window === "undefined") return null;
-  const router = useRouter();
-  const { user } = useUser();
-  const [meetings, setMeetings] = useState<Meeting[]>([
-    {
-      id: "1",
-      salespersonName: "John Doe",
-      date: new Date(2023, 11, 15),
-      time: "10:00 AM",
-    },
-    {
-      id: "2",
-      salespersonName: "Jane Smith",
-      date: new Date(2023, 11, 16),
-      time: "2:00 PM",
-    },
-    {
-      id: "3",
-      salespersonName: "Mike Johnson",
-      date: new Date(2023, 11, 17),
-      time: "11:30 AM",
-    },
-  ]);
-  const [selectedMeeting, setSelectedMeeting] = useState<Meeting | null>(null);
-  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+interface SharedUserData {
+  clerkId: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  scheduledEventUrls: string[];
+}
 
-  const handleViewDetails = (meeting: Meeting) => {
-    setSelectedMeeting(meeting);
-    setIsDetailsOpen(true);
-  };
+export default function CustomerDashboardPage() {
+  const router = useRouter();
+  const { isSignedIn, isLoaded, user } = useUser();
+  const [sharedUserData, setSharedUserData] = useState<SharedUserData | null>(
+    null
+  );
+  const searchParams = useSearchParams();
+  const sharedUserId = searchParams.get("userId");
+
+  const fetchSharedData = useCallback(async (sharedUserId: string) => {
+    try {
+      const res = await axiosInstance.get(`/api/users/${sharedUserId}`);
+      if (res.data.success) {
+        const sharedUser = res.data.data;
+
+        if (
+          !sharedUser.scheduledEventUrls ||
+          sharedUser.scheduledEventUrls.length === 0
+        ) {
+          console.warn("No scheduled event URLs available for this user.");
+        }
+
+        setSharedUserData(sharedUser);
+        console.log("Shared user data:", sharedUser);
+      } else {
+        console.error("Failed to fetch shared user data:", res.data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching shared user data:", error);
+    }
+  }, []);
 
   useEffect(() => {
-    if (!user) {
-      router.push("/sign-in");
+    if (sharedUserId) {
+      fetchSharedData(sharedUserId); // Fetch shared user data
     }
-  }, [user, router]);
-
-  if (!user) {
-    return null;
-  }
+  }, [sharedUserId, fetchSharedData]);
 
   return (
-    <div className="min-h-screen bg-white text-white">
+    <div className="min-h-screen bg-white text-gray-900">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <motion.h1
           initial="hidden"
@@ -79,7 +76,7 @@ export default function CustomerDashboardPage() {
           variants={fadeIn}
           className="text-3xl font-bold mb-8"
         >
-          Welcome, {user.firstName || user.username}!
+          Welcome, {user?.firstName || user?.username || "Guest"}!
         </motion.h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
@@ -101,140 +98,23 @@ export default function CustomerDashboardPage() {
                 <p className="mt-2 text-sm text-gray-600">
                   Ready to book a meeting with a salesperson?
                 </p>
-                <Button
-                  onClick={() => router.push("/customer/book-slot")}
-                  className="mt-4 bg-[#00FF8C] text-[#14144B] hover:bg-[#00FF8C]/90"
-                >
-                  Book Now
-                </Button>
-              </CardContent>
-            </Card>
-          </motion.div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={fadeIn}
-            transition={{ delay: 0.5 }}
-            className="lg:col-span-2"
-          >
-            <Card className="bg-white  backdrop-blur-lg border-neutral-300">
-              <CardHeader>
-                <CardTitle>Upcoming Meetings</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {meetings.length === 0 ? (
-                  <p className="text-gray-300">No meetings scheduled yet.</p>
+                {sharedUserData?.scheduledEventUrls?.length ?? 0 > 0 ? (
+                  <PopupButton
+                    className="mt-4 p-2 rounded-md bg-[#00FF8C] text-[#14144B] hover:bg-[#00FF8C]/90"
+                    url={sharedUserData?.scheduledEventUrls?.[0] || ""}
+                    text="Book Now"
+                    rootElement={document.body}
+                  />
                 ) : (
-                  <ul className="space-y-4">
-                    {meetings.map((meeting, index) => (
-                      <motion.li
-                        key={meeting.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.1 }}
-                      >
-                        <Card className="bg-white/5 hover:bg-white/10 transition-colors duration-200">
-                          <CardContent className="flex items-center justify-between p-4">
-                            <div className="flex items-center space-x-4">
-                              <User className="h-6 w-6 text-[#00FF8C]" />
-                              <div>
-                                <p className="font-semibold">
-                                  {meeting.salespersonName}
-                                </p>
-                                <div className="flex items-center space-x-2 text-sm text-gray-500">
-                                  <CalendarIcon className="h-4 w-4" />
-                                  <span>
-                                    {meeting.date.toLocaleDateString()}
-                                  </span>
-                                  <Clock className="h-4 w-4 ml-2" />
-                                  <span>{meeting.time}</span>
-                                </div>
-                              </div>
-                            </div>
-                            <Button
-                              variant="outline"
-                              onClick={() => handleViewDetails(meeting)}
-                              className="text-[#00FF8C] border-[#00FF8C] hover:bg-[#00FF8C] hover:text-[#14144B]"
-                            >
-                              View Details
-                            </Button>
-                          </CardContent>
-                        </Card>
-                      </motion.li>
-                    ))}
-                  </ul>
+                  <p className="mt-4 text-sm text-red-500">
+                    No available meeting links. Please check back later.
+                  </p>
                 )}
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={fadeIn}
-            transition={{ delay: 0.6 }}
-          >
-            <Card className="bg-white/10 backdrop-blur-lg border-neutral-300">
-              <CardHeader>
-                <CardTitle>Calendar</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Calendar
-                  selected={new Date()}
-                  className="rounded-md border-none bg-transparent text-black"
-                />
               </CardContent>
             </Card>
           </motion.div>
         </div>
       </main>
-
-      <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-        <DialogContent className="bg-white text-black">
-          <DialogHeader>
-            <DialogTitle>Meeting Details</DialogTitle>
-          </DialogHeader>
-          {selectedMeeting && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="space-y-4"
-            >
-              <div>
-                <h3 className="font-semibold text-[#00FF8C]">Salesperson</h3>
-                <p>{selectedMeeting.salespersonName}</p>
-              </div>
-              <div>
-                <h3 className="font-semibold text-[#00FF8C] mb-2">
-                  Date and Time
-                </h3>
-                <div className="flex items-center space-x-2">
-                  <CalendarIcon className="h-4 w-4 text-[#00FF8C]" />
-                  <span>{selectedMeeting.date.toLocaleDateString()}</span>
-                  <Clock className="h-4 w-4 ml-2 text-[#00FF8C]" />
-                  <span>{selectedMeeting.time}</span>
-                </div>
-              </div>
-              {/* <div>
-                <h3 className="font-semibold text-[#00FF8C] mb-2">Actions</h3>
-                <div className="flex space-x-2">
-                  <Button className="bg-[#00FF8C] text-[#14144B] hover:bg-[#00FF8C]/90">
-                    Reschedule
-                  </Button>
-                  <Button variant="outline" className="text-[#00FF8C] border-[#00FF8C] hover:bg-[#00FF8C] hover:text-[#14144B]">
-                    Cancel Meeting
-                  </Button>
-                </div>
-              </div> */}
-            </motion.div>
-          )}
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
-

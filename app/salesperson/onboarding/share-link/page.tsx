@@ -15,7 +15,7 @@ export default function ShareLinkPage() {
   const router = useRouter();
   const { user } = useUser();
   const [showCelebration, setShowCelebration] = useState(false);
-  const [sharedLink, setSharedLink] = useState<string[]>([]); // Initialize as an array
+  // const [sharedLink, setSharedLink] = useState<string[]>([]); // Initialize as an array
 
   const steps = [
     { id: 1, title: "Connect Calendly" },
@@ -24,50 +24,10 @@ export default function ShareLinkPage() {
     { id: 4, title: "Share Link" },
   ];
 
-  const BaseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-
-  function shareableLink(BaseUrl:string, userId: string) {
-    if (!BaseUrl) {
-      throw new Error("Base URL is not defined in the environment variables.");
-    }
-
-    if (!userId) {
-      throw new Error("User ID is required.");
-    }
-
-    return sharedLink.map((_) => {
-      const url = new URL(BaseUrl); // Construct the full
-      url.searchParams.set("userId", userId);
-      return url.toString(); // Return the complete URL as a string
-    });
-  }
-
-  // useEffect(() => {
-  //   const dataFetch = async () => {
-  //     if (!user) {
-  //       console.warn("User is not logged in or not loaded.");
-  //       return;
-  //     }
-  //     try {
-  //       const res = await axiosInstance.get(`/api/users/${user?.id}`);
-  //       const eventUrls = res?.data?.data?.scheduledEventUrls; // Adjusted path if API structure is correct
-
-  //       if (eventUrls && Array.isArray(eventUrls) && eventUrls.length > 0) {
-  //         setSharedLink(eventUrls[0]); // Set the array of URLs
-  //       } else {
-  //         console.warn("No scheduled event URLs found for the user.");
-  //         setSharedLink([]); // Set an empty array when no URLs are found
-  //       }
-  //     } catch (error: any) {
-  //       console.error("Error fetching user data:", error.message || error);
-  //       setSharedLink([]); // Clear the shared link on error
-  //     }
-  //   };
-
-  //   dataFetch();
-  // }, [user]);
+ 
+  const shareableLink=`${process.env.NEXT_PUBLIC_BASE_URL}/customer-dashboard?userId=${user?.id!}&role=customer`
   const handleShareLink = (link: string) => {
-    if (sharedLink) {
+    if (shareableLink) {
       navigator.clipboard.writeText(link);
       setShowCelebration(true);
     } else {
@@ -112,16 +72,13 @@ export default function ShareLinkPage() {
                 below to copy it.
               </p>
               <div className="p-4 w-full flex flex-col bg-gray-100 rounded-md space-y-4">
-                {sharedLink.length > 0 ? (
+                {shareableLink ? (
                   <div className="w-full flex items-center justify-between p-2 bg-white shadow-sm rounded-md">
                     <p className="text-sm w-8/12 font-mono break-words">
-                      {shareableLink(BaseUrl!, user?.id!)[0] ||
-                        "Loading booking link..."}
+                      {shareableLink || "Loading booking link..."}
                     </p>
                     <Button
-                      onClick={() =>
-                        handleShareLink(shareableLink(BaseUrl!, user?.id!)[0])
-                      }
+                      onClick={() => handleShareLink(shareableLink)}
                       className="w-3/12 bg-[#00FF8C] text-[#14144B] hover:bg-[#00FF8C]/90"
                     >
                       <LinkIcon className="mr-2 h-4 w-4" />

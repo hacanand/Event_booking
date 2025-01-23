@@ -107,38 +107,40 @@ export default function SalespersonDashboardPage() {
   ]);
   const [selectedMeeting, setSelectedMeeting] = useState<Meeting | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-  const [eventLink, setEventLink] = useState("");
+  // const [eventLink, setEventLink] = useState("");
 
   // const handleViewDetails = (meeting: Meeting) => {
   //   setSelectedMeeting(meeting);
   //   setIsDetailsOpen(true);
   // };
- 
-  useEffect(() => {
-    const dataFetch = async () => {
-      if (!user) {
-        console.warn("User is not logged in or not loaded.");
-        return;
-      }
+  const shareableLink = `${
+    process.env.NEXT_PUBLIC_BASE_URL
+  }/customer-dashboard?userId=${user?.id!}&role=customer`;
+  // useEffect(() => {
+  //   const dataFetch = async () => {
+  //     if (!user) {
+  //       console.warn("User is not logged in or not loaded.");
+  //       return;
+  //     }
 
-      try {
-        const res = await axiosInstance.get(`/api/users/${user?.id}`);
-        const eventUrls = res?.data?.data?.scheduledEventUrls;
-        // console.log("Event URLs:",res);
-        if (eventUrls && Array.isArray(eventUrls) && eventUrls.length > 0) {
-          setEventLink(eventUrls[0]);
-        } else {
-          console.warn("No scheduled event URLs found for the user.");
-          setEventLink("No booking link available.");
-        }
-      } catch (error: any) {
-        console.error("Error fetching user data:", error.message || error);
-        setEventLink("Error fetching booking link.");
-      }
-    };
+  //     try {
+  //       const res = await axiosInstance.get(`/api/users/${user?.id}`);
+  //       const eventUrls = res?.data?.data?.scheduledEventUrls;
+  //       // console.log("Event URLs:",res);
+  //       if (eventUrls && Array.isArray(eventUrls) && eventUrls.length > 0) {
+  //         setEventLink(eventUrls[0]);
+  //       } else {
+  //         console.warn("No scheduled event URLs found for the user.");
+  //         setEventLink("No booking link available.");
+  //       }
+  //     } catch (error: any) {
+  //       console.error("Error fetching user data:", error.message || error);
+  //       setEventLink("Error fetching booking link.");
+  //     }
+  //   };
 
-    dataFetch();
-  }, [user]);
+  //   dataFetch();
+  // }, [user]);
  
   return (
     <div className="min-h-screen bg-white text-black">
@@ -226,7 +228,7 @@ export default function SalespersonDashboardPage() {
                 </p>
                 <Button
                   onClick={() => {
-                    navigator.clipboard.writeText(eventLink);
+                    navigator.clipboard.writeText(shareableLink);
                   }}
                   variant="outline"
                   className="mt-4 text-[#00FF8C] border-[#00FF8C] hover:bg-[#00FF8C] hover:text-[#14144B]"
