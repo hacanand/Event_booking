@@ -21,18 +21,12 @@ interface Meeting {
   time: string;
 }
 
-interface SharedUserData {
-  clerkId: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  scheduledEventUrls: string[];
-}
+ 
 
 export default function CustomerDashboardPage() {
   const router = useRouter();
   const { isSignedIn, isLoaded, user } = useUser();
-  const [sharedUserData, setSharedUserData] = useState<SharedUserData | null>(
+  const [sharedUserData, setSharedUserData] = useState<any >(
     null
   );
   const searchParams = useSearchParams();
@@ -43,7 +37,7 @@ export default function CustomerDashboardPage() {
       const res = await axiosInstance.get(`/api/users/${sharedUserId}`);
       if (res.data.success) {
         const sharedUser = res.data.data;
-
+        // console.log("Shared user data res.data.data:", sharedUser);
         if (
           !sharedUser.scheduledEventUrls ||
           sharedUser.scheduledEventUrls.length === 0
@@ -52,21 +46,21 @@ export default function CustomerDashboardPage() {
         }
 
         setSharedUserData(sharedUser);
-        console.log("Shared user data:", sharedUser);
+        console.log("Shared user data checked:", sharedUser);
       } else {
         console.error("Failed to fetch shared user data:", res.data.message);
       }
     } catch (error) {
       console.error("Error fetching shared user data:", error);
     }
-  }, []);
-
+  }, [sharedUserId]);
+  console.time("fetchUserData");
   useEffect(() => {
     if (sharedUserId) {
       fetchSharedData(sharedUserId); // Fetch shared user data
     }
   }, [sharedUserId, fetchSharedData]);
-
+console.timeEnd("fetchUserData");
   return (
     <div className="min-h-screen bg-white text-gray-900">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
