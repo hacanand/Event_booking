@@ -25,7 +25,7 @@ interface Meeting {
 
 export default function CustomerDashboardPage() {
   const router = useRouter();
-  const { isSignedIn, isLoaded, user } = useUser();
+  const {user} = useUser();
   const [sharedUserData, setSharedUserData] = useState<any >(
     null
   );
@@ -70,7 +70,7 @@ console.timeEnd("fetchUserData");
           variants={fadeIn}
           className="text-3xl font-bold mb-8"
         >
-          Welcome, {user?.firstName || user?.username || "Guest"}!
+          Welcome, {user?.firstName || "Guest"}!
         </motion.h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
@@ -89,18 +89,29 @@ console.timeEnd("fetchUserData");
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="mt-2 text-sm text-gray-600">
-                  Ready to book a meeting with a salesperson?
+                <p  className="mt-2 text-sm text-gray-600">
+                  Ready to book a meeting with {sharedUserData?.firstName}!
                 </p>
                 {sharedUserData?.scheduledEventUrls?.length ?? 0 > 0 ? (
-                  <PopupButton
+                  <PopupButton key={1}
                     className="mt-4 p-2 rounded-md bg-[#00FF8C] text-[#14144B] hover:bg-[#00FF8C]/90"
                     url={sharedUserData?.scheduledEventUrls?.[0] || ""}
                     text="Book Now"
                     rootElement={document.body}
+                    prefill={{
+                      name: user?.firstName! + " " + user?.lastName!,
+                      email: user?.emailAddresses?.[0]?.emailAddress!,
+                    }}
+                    pageSettings={{
+                      backgroundColor: "ffffff",
+                      hideEventTypeDetails: false,
+                      hideLandingPageDetails: false,
+                      primaryColor: "00FF8C",
+                      textColor: "14144B",
+                    }}
                   />
                 ) : (
-                  <p className="mt-4 text-sm text-red-500">
+                  <p key={2} className="mt-4 text-sm text-red-500">
                     No available meeting links. Please check back later.
                   </p>
                 )}
