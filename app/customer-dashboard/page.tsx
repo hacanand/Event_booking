@@ -21,46 +21,45 @@ interface Meeting {
   time: string;
 }
 
- 
-
 export default function CustomerDashboardPage() {
   const router = useRouter();
-  const {user} = useUser();
-  const [sharedUserData, setSharedUserData] = useState<any >(
-    null
-  );
+  const { user } = useUser();
+  const [sharedUserData, setSharedUserData] = useState<any>(null);
   const searchParams = useSearchParams();
   const sharedUserId = searchParams.get("userId");
 
-  const fetchSharedData = useCallback(async (sharedUserId: string) => {
-    try {
-      const res = await axiosInstance.get(`/api/users/${sharedUserId}`);
-      if (res.data.success) {
-        const sharedUser = res.data.data;
-        // console.log("Shared user data res.data.data:", sharedUser);
-        if (
-          !sharedUser.scheduledEventUrls ||
-          sharedUser.scheduledEventUrls.length === 0
-        ) {
-          console.warn("No scheduled event URLs available for this user.");
-        }
+  const fetchSharedData = useCallback(
+    async (sharedUserId: string) => {
+      try {
+        const res = await axiosInstance.get(`/api/users/${sharedUserId}`);
+        if (res.data.success) {
+          const sharedUser = res.data.data;
+          // console.log("Shared user data res.data.data:", sharedUser);
+          if (
+            !sharedUser.scheduledEventUrls ||
+            sharedUser.scheduledEventUrls.length === 0
+          ) {
+            console.warn("No scheduled event URLs available for this user.");
+          }
 
-        setSharedUserData(sharedUser);
-        console.log("Shared user data checked:", sharedUser);
-      } else {
-        console.error("Failed to fetch shared user data:", res.data.message);
+          setSharedUserData(sharedUser);
+          console.log("Shared user data checked:", sharedUser);
+        } else {
+          console.error("Failed to fetch shared user data:", res.data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching shared user data:", error);
       }
-    } catch (error) {
-      console.error("Error fetching shared user data:", error);
-    }
-  }, [sharedUserId]);
+    },
+    [sharedUserId]
+  );
   console.time("fetchUserData");
   useEffect(() => {
     if (sharedUserId) {
       fetchSharedData(sharedUserId); // Fetch shared user data
     }
   }, [sharedUserId, fetchSharedData]);
-console.timeEnd("fetchUserData");
+  console.timeEnd("fetchUserData");
   return (
     <div className="min-h-screen bg-white text-gray-900">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -89,11 +88,12 @@ console.timeEnd("fetchUserData");
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p  className="mt-2 text-sm text-gray-600">
+                <p className="mt-2 text-sm text-gray-600">
                   Ready to book a meeting with {sharedUserData?.firstName}!
                 </p>
                 {sharedUserData?.scheduledEventUrls?.length ?? 0 > 0 ? (
-                  <PopupButton key={1}
+                  <PopupButton
+                    key={1}
                     className="mt-4 p-2 rounded-md bg-[#00FF8C] text-[#14144B] hover:bg-[#00FF8C]/90"
                     url={sharedUserData?.scheduledEventUrls?.[0] || ""}
                     text="Book Now"

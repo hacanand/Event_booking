@@ -1,9 +1,10 @@
-'use client'
+"use client";
+
 import { motion } from "framer-motion";
 import { CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Card } from "@/components/ui/card";
 import { Steps } from "@/components/steps";
@@ -11,26 +12,35 @@ import { Steps } from "@/components/steps";
 export default function CalendlyConnectionSuccess() {
   const router = useRouter();
   const { toast } = useToast();
+  const [loading, setLoading] = useState(false); // Button loading state
 
   function handleNext() {
-    router.push("/salesperson/onboarding/check-connection");
+    setLoading(true); // Show loading state
+    setTimeout(() => {
+      router.push("/salesperson/onboarding/check-connection");
+      setLoading(false); // Reset loading after navigation
+    }, 1000); // Simulate loading delay
   }
 
-  // Get response query parameter from URL
+  // Get response query parameters from URL
   const searchParams = useSearchParams();
-  const title = searchParams.get('title');
-  const description = searchParams.get('description');
-  const variant = searchParams.get('variant') as "default" | "destructive" | null | undefined;
-console.log(title, description, variant)
+  const title = searchParams.get("title");
+  const description = searchParams.get("description");
+  const variant = searchParams.get("variant") as
+    | "default"
+    | "destructive"
+    | null
+    | undefined;
+
   useEffect(() => {
-    if (!title || !description || !variant) {
+    if (title && description && variant) {
       toast({
-        title: title!,
-        description: description!,
-        variant: variant!,
+        title,
+        description,
+        variant,
       });
     }
-  }, [router, title, description, variant]);
+  }, [title, description, variant, toast]);
 
   const steps = [
     { id: 1, title: "Connect Calendly" },
@@ -70,8 +80,15 @@ console.log(title, description, variant)
             <Button
               onClick={handleNext}
               className="w-full bg-[#00FF8C] text-[#14144B] hover:bg-[#00FF8C]/90"
+              disabled={loading} // Disable button when loading
             >
-              Continue to Next Step
+              {loading ? (
+                <>
+                  <div className="loader mr-2"></div> Processing...
+                </>
+              ) : (
+                <>Continue to Next Step</>
+              )}
             </Button>
           </motion.div>
         </Card>

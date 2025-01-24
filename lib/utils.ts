@@ -6,11 +6,4 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 
-// localization.ts
-export const customLocalization = {
-  socialButtons: {
-    linkedin: {
-      label: "Sign in with LinkedIn", // Update LinkedIn button text
-    },
-  },
-};
+ 

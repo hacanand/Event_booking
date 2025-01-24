@@ -24,8 +24,7 @@ export default function ShareLinkPage() {
     { id: 4, title: "Share Link" },
   ];
 
- 
-  const shareableLink=`${process.env.NEXT_PUBLIC_BASE_URL}/customer-dashboard?userId=${user?.id!}&role=customer`
+  const shareableLink=`${process.env.NEXT_PUBLIC_BASE_URL}/sign-in?userId=${user?.id!} `
   const handleShareLink = (link: string) => {
     if (shareableLink) {
       navigator.clipboard.writeText(link);
@@ -43,7 +42,7 @@ export default function ShareLinkPage() {
     if (showCelebration) {
       const timer = setTimeout(() => {
         setShowCelebration(false);
-      }, 2500);
+      }, 2000);
 
       return () => clearTimeout(timer);
     }
@@ -73,7 +72,7 @@ export default function ShareLinkPage() {
               </p>
               <div className="p-4 w-full flex flex-col bg-gray-100 rounded-md space-y-4">
                 {shareableLink ? (
-                  <div className="w-full flex items-center justify-between p-2 bg-white shadow-sm rounded-md">
+                  <div key={1} className="w-full flex items-center justify-between p-2 bg-white shadow-sm rounded-md">
                     <p className="text-sm w-8/12 font-mono break-words">
                       {shareableLink || "Loading booking link..."}
                     </p>
@@ -86,7 +85,7 @@ export default function ShareLinkPage() {
                     </Button>
                   </div>
                 ) : (
-                  <p className="text-sm font-mono text-center text-gray-500">
+                  <p key={2} className="text-sm font-mono text-center text-gray-500">
                     No booking links available.
                   </p>
                 )}

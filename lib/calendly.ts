@@ -76,10 +76,6 @@ export async function getCalendlyEventTypes(uri: string, accessToken: string) {
 
  
  
-
-// const CALENDLY_API_BASE = "https://api.calendly.com";
-// const CALENDLY_ACCESS_TOKEN = process.env.CALENDLY_ACCESS_TOKEN; // Add this to your .env.local file
- 
 // Fetch events from Calendly
 export async function getCalendlyEvents(): Promise<any> {
   const response = await axios.get(

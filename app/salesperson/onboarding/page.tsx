@@ -53,7 +53,7 @@ export default function SalespersonOnboardingPage() {
         } else if (updatedRole === "customer") {
           router.push("/customer-dashboard");
         } else {
-          console.error("Invalid role:", updatedRole);
+          console.error("Invalid roWle:", updatedRole);
         }
       }
     };

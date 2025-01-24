@@ -1,43 +1,48 @@
-"use client"
+"use client";
 
-import { useRouter, useSearchParams } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
- 
-import { motion } from "framer-motion"
-import { Steps } from "@/components/steps"
-import { useEffect } from "react"
-import { useToast } from "@/hooks/use-toast"
+import { useRouter, useSearchParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+
+import { motion } from "framer-motion";
+import { Steps } from "@/components/steps";
+import { useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function CheckConnectionPage() {
-  const router = useRouter()
-const { toast } = useToast();
+  const router = useRouter();
+  const { toast } = useToast();
+
   const steps = [
     { id: 1, title: "Connect Calendly" },
     { id: 2, title: "Check Connection" },
     { id: 3, title: "Connect Google Calendar" },
     { id: 4, title: "Share Link" },
-  ]
+  ];
 
   const handleNextStep = () => {
-    router.push("/salesperson/onboarding/connect-google-calendar")
-  }
+    router.push("/salesperson/onboarding/connect-google-calendar");
+  };
 
-    const searchParams = useSearchParams();
-    const title = searchParams.get('title');
-    const description = searchParams.get('description');
-    const variant = searchParams.get('variant') as "default" | "destructive" | null | undefined;
-  // console.log(title, description, variant)
-    useEffect(() => {
-      if (!title || !description || !variant) {
-        toast({
-          title: title!,
-          description: description!,
-          variant: variant!,
-        });
-      }
-    }, [router, title, description, variant]);
-  
+  const searchParams = useSearchParams();
+  const title = searchParams.get("title");
+  const description = searchParams.get("description");
+  const variant = searchParams.get("variant") as
+    | "default"
+    | "destructive"
+    | null
+    | undefined;
+
+  // Use effect to show toast if all required parameters are present
+  useEffect(() => {
+    if (title && description && variant) {
+      toast({
+        title,
+        description,
+        variant,
+      });
+    }
+  }, [title, description, variant, toast]);
 
   return (
     <div className="min-h-screen bg-gray-50 py-12">
@@ -54,9 +59,16 @@ const { toast } = useToast();
             className="space-y-6"
           >
             <div className="space-y-4">
-              <h2 className="text-2xl font-bold text-[#14144B]">Check Calendly-Google Connection</h2>
-              <p className="text-gray-500">Let's check if your Calendly is connected to Google Calendar</p>
-              <Button onClick={handleNextStep} className="w-full bg-[#00FF8C] text-[#14144B] hover:bg-[#00FF8C]/90">
+              <h2 className="text-2xl font-bold text-[#14144B]">
+                Check Calendly-Google Connection
+              </h2>
+              <p className="text-gray-500">
+                Let's check if your Calendly is connected to Google Calendar
+              </p>
+              <Button
+                onClick={handleNextStep}
+                className="w-full bg-[#00FF8C] text-[#14144B] hover:bg-[#00FF8C]/90"
+              >
                 Check Connection
               </Button>
             </div>
@@ -64,6 +76,5 @@ const { toast } = useToast();
         </Card>
       </div>
     </div>
-  )
+  );
 }
-

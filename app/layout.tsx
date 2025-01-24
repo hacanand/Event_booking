@@ -16,13 +16,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider localization={localization}>
-      <html lang="en">
+        <ClerkProvider localization={localization}>
+    <html lang="en">
         <body className={inter.className}>
           <div className="flex flex-col min-h-screen">
             {/* <AuthProvider> */}
             <Navbar />
-            <AnimatePresence>
+            <AnimatePresence >
               <main className="flex-grow">{children}</main>
               <Toaster />
             </AnimatePresence>

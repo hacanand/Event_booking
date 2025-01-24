@@ -33,8 +33,9 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "next-env.d.ts",
-    "build/types/**/*.ts"
-, "app/salesperson/onboarding/calendly-connection-success"  ],
+    "build/types/**/*.ts",
+    "app/salesperson/onboarding/calendly-connection-success"
+  ],
   "exclude": [
     "node_modules"
   ]

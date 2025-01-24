@@ -3,69 +3,118 @@ import { registerCalendlyWebhook } from "@/scripts/registerWebhook";
 import {
   exchangeCodeForToken,
   saveCalendlyUserAndUrlData,
+ 
 } from "@/lib/calendly";
 import { currentUser } from "@clerk/nextjs/server";
-// import axiosInstance from "@/app/utils/axiosInstance";
 import { createRedirectResponse } from "@/lib/redirectHelper";
 import { createToken } from "@/app/actions/google-calendar/tokenData";
- 
+import { isCalendlyLoggedIn } from "@/app/actions/calendly/tokenAndDataUpdate";
 
 export async function GET(req: Request) {
   try {
     const url = new URL(req.url);
     const code = url.searchParams.get("code");
 
-    if (!code) {
+    // Fetch the current user
+    const user = await currentUser();
+    if (!user?.id) {
+      console.error("Error: User not found during Calendly connection");
       return createRedirectResponse(
         "/salesperson/onboarding/connect-calendly",
         {
-          title: "Code is not Valid",
-          description: "Please try again.",
+          title: "User Not Found",
+          description: "Unable to identify the user. Please log in again.",
           variant: "destructive",
         }
       );
     }
 
-    // console.time("calendly-auth");
+    // Check if Calendly is already connected
+    const isConnected = await isCalendlyLoggedIn({ clerkId: user.id });
+    if (isConnected) {
+      return createRedirectResponse(
+        "/salesperson/onboarding/calendly-connection-success",
+        {
+          title: "Calendly Already Connected",
+          description:
+            "Your Calendly account is already connected. Redirecting to the next step.",
+          variant: "default",
+        }
+      );
+    }
 
-    // Exchange authorization code for tokens
-    const res = await exchangeCodeForToken(code);
-
-    // Set cookies for Calendly tokens
-    // await axiosInstance.post("/api/auth/calendly/set-cookies", {
-    //   access_token: res?.access_token,
-    //   refresh_token: res?.refresh_token,
-    // });
-    const user = await currentUser();
-
-    if (!user?.id) {
+    if (!code) {
+      console.warn("Error: Missing authorization code in request");
       return createRedirectResponse(
         "/salesperson/onboarding/connect-calendly",
         {
-          title: "User not found",
-          description: "Please try again.",
+          title: "Authorization Code Missing",
+          description: "Please try again by reconnecting Calendly.",
+          variant: "destructive",
+        }
+      );
+    }
+
+    // Exchange authorization code for tokens
+    let tokenResponse;
+    try {
+      tokenResponse = await exchangeCodeForToken(code);
+    } catch (error) {
+      console.error("Error exchanging code for token:", error);
+      return createRedirectResponse(
+        "/salesperson/onboarding/connect-calendly",
+        {
+          title: "Token Exchange Failed",
+          description:
+            "There was an issue exchanging the authorization code. Please try again.",
+          variant: "destructive",
+        }
+      );
+    }
+
+    const { access_token, refresh_token } = tokenResponse || {};
+    if (!access_token || !refresh_token) {
+      console.error(
+        "Error: Missing tokens in Calendly response",
+        tokenResponse
+      );
+      return createRedirectResponse(
+        "/salesperson/onboarding/connect-calendly",
+        {
+          title: "Invalid Calendly Response",
+          description: "Tokens could not be retrieved. Please try again.",
           variant: "destructive",
         }
       );
     }
 
     // Save token and user data
+    try {
+      await createToken(user.id, refresh_token);
+      const userCalendlyData = await saveCalendlyUserAndUrlData(
+        user.id,
+        access_token
+      );
 
-    await createToken(user.id, res?.refresh_token);
-    const response = await saveCalendlyUserAndUrlData(
-      user.id,
-      res.access_token
-    );
+      // Optionally register a Calendly webhook
+      // await registerCalendlyWebhook(
+      //   access_token,
+      //   userCalendlyData?.resource?.current_organization
+      // );
+    } catch (error) {
+      console.error("Error saving Calendly user data or tokens:", error);
+      return createRedirectResponse(
+        "/salesperson/onboarding/connect-calendly",
+        {
+          title: "Data Saving Failed",
+          description:
+            "An error occurred while saving your Calendly data. Please try again.",
+          variant: "destructive",
+        }
+      );
+    }
 
-    // Register Calendly webhook
-    // await registerCalendlyWebhook(
-    //   res.access_token,
-    //   response?.resource?.current_organization
-    // );
-
-    // console.timeEnd("calendly-auth");
-
-    // Redirect to success page with query params
+    // Redirect to success page
     return createRedirectResponse(
       "/salesperson/onboarding/calendly-connection-success",
       {
@@ -75,14 +124,11 @@ export async function GET(req: Request) {
         variant: "default",
       }
     );
-
-     
   } catch (error) {
-    console.error("Error in Calendly OAuth callback:", error);
-    console.timeEnd("calendly-auth");
+    console.error("Unexpected error during Calendly OAuth callback:", error);
     return createRedirectResponse("/salesperson/onboarding/connect-calendly", {
-      title: "Error",
-      description: "Please try again.",
+      title: "Unexpected Error",
+      description: "An unexpected error occurred. Please try again later.",
       variant: "destructive",
     });
   }

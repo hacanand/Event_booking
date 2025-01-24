@@ -4,26 +4,24 @@ import { SignIn } from "@clerk/nextjs";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 
 export default function LoginPage() {
   const [role, setRole] = useState<string>("customer"); // Default to "customer"
   const router = useRouter();
   const { isSignedIn, isLoaded } = useUser();
-
+   const searchParams = useSearchParams();
+    const userId = searchParams.get('userId');
   // Update localStorage when role changes
-  useEffect(() => {
-    localStorage.setItem("role", role);
-  }, [role]);
-
+  localStorage.setItem("role", role);
   useEffect(() => {
     if (isSignedIn && isLoaded) {
       const storedRole = localStorage.getItem("role");
       if (storedRole === "salesperson") {
         router.push("/salesperson/onboarding");
       } else {
-        router.push("/customer-dashboard");
+        router.push("/customer-dashboard?userId="+userId);
       }
     }
   }, [isSignedIn, isLoaded]);
@@ -63,9 +61,10 @@ export default function LoginPage() {
               </TabsList>
               <TabsContent value="customer">
                 <SignIn
+                  key={1}
                   path="/sign-in"
                   routing="path"
-                  fallbackRedirectUrl="/customer-dashboard"
+                  fallbackRedirectUrl={`/customer-dashboard?userId=${userId}`}
                   appearance={{
                     elements: {
                       formButtonPrimary:
@@ -84,6 +83,7 @@ export default function LoginPage() {
               </TabsContent>
               <TabsContent value="salesperson">
                 <SignIn
+                  key={2}
                   path="/sign-in"
                   routing="path"
                   fallbackRedirectUrl="/salesperson/onboarding"
