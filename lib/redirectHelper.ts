@@ -8,10 +8,14 @@ export function createRedirectResponse(
   const redirectUrl = new URL(path, baseUrl);
 
   // Append query parameters
+  const uniqueParams = new Map<string, string>();
   Object.entries(queryParams).forEach(([key, value]) => {
     if (value !== undefined) {
-      redirectUrl.searchParams.append(key, value);
+      uniqueParams.set(key, value);
     }
+  });
+  uniqueParams.forEach((value, key) => {
+    redirectUrl.searchParams.append(key, value);
   });
 
   // Return NextResponse.redirect

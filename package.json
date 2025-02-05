@@ -6,7 +6,6 @@
     "dev": "next dev -p 3000",
     "build": "next build",
     "start": "next start -p 8080"
- 
   },
   "dependencies": {
     "@clerk/localizations": "^3.9.11",
@@ -23,6 +22,7 @@
     "canvas-confetti": "^1.9.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "crypto": "^1.0.1",
     "date-fns": "^3.6.0",
     "framer-motion": "^11.18.2",
     "googleapis": "^144.0.0",

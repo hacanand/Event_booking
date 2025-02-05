@@ -29,6 +29,7 @@ export default function ConnectCalendlyPage() {
     try {
       setLoading(true); // Start loading
       const authUrl = getCalendlyAuthUrl();
+      router.push(authUrl);
       if (!authUrl)
         throw new Error("Unable to get Calendly authorization URL.");
       toast({

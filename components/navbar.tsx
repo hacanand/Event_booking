@@ -56,7 +56,7 @@ export default function Navbar() {
                 }`}
               >
                 {isSigningOut ? (
-                  <span className="loader">
+                  <span className=" ">
                     <Loader className="text-[#00FF8C]" />
                   </span>  
                 ) : (
