@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,7 +19,7 @@ interface SharedUserData {
   scheduledEventUrls?: string[];
 }
 
-export default function CustomerDashboardPage() {
+function CustomerDashboardContent() {
   const { user } = useUser();
   const [sharedUserData, setSharedUserData] = useState<SharedUserData | null>(
     null
@@ -123,5 +123,13 @@ export default function CustomerDashboardPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function CustomerDashboardPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CustomerDashboardContent />
+    </Suspense>
   );
 }

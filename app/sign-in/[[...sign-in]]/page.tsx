@@ -1,4 +1,5 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import { SignIn } from "@clerk/nextjs";
 import Image from "next/image";
@@ -14,8 +15,11 @@ export default function LoginPage() {
   const searchParams = useSearchParams();
   const userId = searchParams.get("userId");
 
-  // Update localStorage when role changes
-  localStorage.setItem("role", role);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("role", role);
+    }
+  }, [role]);
 
   useEffect(() => {
     if (isSignedIn && isLoaded) {

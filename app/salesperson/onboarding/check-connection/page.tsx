@@ -3,13 +3,12 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-
 import { motion } from "framer-motion";
 import { Steps } from "@/components/steps";
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import { useToast } from "@/hooks/use-toast";
 
-export default function CheckConnectionPage() {
+function CheckConnectionContent() {
   const router = useRouter();
   const { toast } = useToast();
 
@@ -33,7 +32,6 @@ export default function CheckConnectionPage() {
     | null
     | undefined;
 
-  // Use effect to show toast if all required parameters are present
   useEffect(() => {
     if (title && description && variant) {
       toast({
@@ -62,9 +60,10 @@ export default function CheckConnectionPage() {
               <h2 className="text-2xl font-bold text-[#14144B]">
                 Check Calendly-Google Connection
               </h2>
-                <p className="text-gray-500">
-                Let&apos;s check if your Calendly is connected to Google Calendar
-                </p>
+              <p className="text-gray-500">
+                Let&apos;s check if your Calendly is connected to Google
+                Calendar
+              </p>
               <Button
                 onClick={handleNextStep}
                 className="w-full bg-[#00FF8C] text-[#14144B] hover:bg-[#00FF8C]/90"
@@ -76,5 +75,13 @@ export default function CheckConnectionPage() {
         </Card>
       </div>
     </div>
+  );
+}
+
+export default function CheckConnectionPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CheckConnectionContent />
+    </Suspense>
   );
 }
