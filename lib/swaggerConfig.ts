@@ -1,10 +1,27 @@
 import swaggerJSDoc from "swagger-jsdoc";
 import fs from "fs-extra";
 import path from "path";
+// Define a type for HTTP methods
+type HttpMethod = "get" | "post" | "put" | "delete";
 
-// Function to detect available HTTP methods in route.ts files
-const getApiRoutes = () => {
-  const routes: Record<string, any> = {};
+interface RouteMethod {
+  summary: string;
+  description: string;
+  requestBody?: {
+    content: {
+      "application/json": {
+        schema: { type: string };
+      };
+    };
+  };
+  responses: Record<number, { description: string }>;
+}
+
+// Define a type for API routes
+type ApiRoutes = Record<string, Partial<Record<HttpMethod, RouteMethod>>>;
+
+const getApiRoutes = (): ApiRoutes => {
+  const routes: ApiRoutes = {};
   const apiDir = path.join(process.cwd(), "app/api");
 
   const walkDir = (dir: string, parentPath: string = "") => {
@@ -22,8 +39,9 @@ const getApiRoutes = () => {
         // Read the file to check for existing methods
         const fileContent = fs.readFileSync(fullPath, "utf-8");
 
-        // Check if different HTTP methods are defined
-        const methods: Record<string, any> = {};
+        // Define allowed HTTP methods
+        const methods: Partial<Record<HttpMethod, RouteMethod>> = {};
+
         if (/export\s+async\s+function\s+GET/.test(fileContent)) {
           methods.get = {
             summary: `GET ${routePath}`,

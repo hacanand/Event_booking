@@ -2,14 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import User, { IUser } from "../../../models/userModel";
 import dbConnect from "@/app/utils/dbConnect";
 
-interface ApiResponse<T = any> {
+interface ApiResponse<T = unknown> {
   data?: T;
   error?: string;
   success: boolean;
   response: string;
   status: number;
 }
-
 export async function GET(): Promise<NextResponse<ApiResponse<IUser[]>>> {
   try {
     await dbConnect();
