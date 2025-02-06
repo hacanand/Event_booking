@@ -1,38 +1,57 @@
-// import {   NextApiResponse } from "next";
- 
-import User from "../../../models/userModel";
-import dbConnect from "@/app/utils/dbConnect";
 import { NextRequest, NextResponse } from "next/server";
+import User, { IUser } from "../../../models/userModel";
+import dbConnect from "@/app/utils/dbConnect";
 
-export async function GET( ) {
+interface ApiResponse<T = any> {
+  data?: T;
+  error?: string;
+  success: boolean;
+  response: string;
+  status: number;
+}
+
+export async function GET(): Promise<NextResponse<ApiResponse<IUser[]>>> {
   try {
     await dbConnect();
-    const users = await User.find({});
+    const users: IUser[] = await User.find({});
     return NextResponse.json({
       data: users,
       success: true,
       response: "All users fetched successfully",
       status: 200,
     });
-  } catch (error  ) {
+  } catch (error) {
     return NextResponse.json({
-      error: error as Error,
+      error: (error as Error).message,
       success: false,
       response: "Failed to fetch users",
       status: 500,
     });
   }
 }
-export async function POST(req: NextRequest ) {
+
+interface UserRequestBody {
+  clerkId: string;
+  userType: string;
+  email: string;
+  scheduledEventUrls?: string[];
+  firstName?: string;
+  lastName?: string;
+  profilePicture?: string;
+}
+
+export async function POST(
+  req: NextRequest
+): Promise<NextResponse<ApiResponse<IUser>>> {
   try {
     await dbConnect();
-    const body = await req.json();
+    const body: UserRequestBody = await req.json();
 
     const {
       clerkId,
       userType,
       email,
-      schedulesEventUrl,
+      scheduledEventUrls,
       firstName,
       lastName,
       profilePicture,
@@ -42,24 +61,24 @@ export async function POST(req: NextRequest ) {
       return NextResponse.json(
         {
           success: false,
-          message: "clerkId, userType, and email are required",
+          response: "clerkId, userType, and email are required",
+          status: 400,
         },
         { status: 400 }
       );
     }
 
-    // Create the user object explicitly to ensure it matches the schema
-    const userObj = {
+    const userObj = new User({
       clerkId,
       userType,
       email,
-      schedulesEventUrl: schedulesEventUrl || [],
-      firstName: firstName || null,
-      lastName: lastName || null,
-      profilePicture: profilePicture || null,
-    };
+      scheduledEventUrls: scheduledEventUrls || [],
+      firstName: firstName || "",
+      lastName: lastName || "",
+      profilePicture: profilePicture || "",
+    });
 
-    const user = await User.create(userObj);
+    const user: IUser = await userObj.save();
 
     return NextResponse.json({
       data: user,
@@ -67,61 +86,12 @@ export async function POST(req: NextRequest ) {
       response: "User created successfully",
       status: 201,
     });
-  } catch (error ) {
+  } catch (error) {
     return NextResponse.json({
-      error: error ,
+      error: (error as Error).message,
       success: false,
+      response: "Failed to create user",
       status: 500,
     });
   }
 }
-
- 
-// export async function PUT(req: NextRequest) {
-//   try {
-//     await dbConnect(); // Ensure database connection
-//     const body = await req.json();
-
-//     const { clerkId, ...updateFields } = body;
-
-//     if (!clerkId) {
-//       return NextResponse.json(
-//         {
-//           success: false,
-//           response: "clerkId is required to identify the user",
-//         },
-//         { status: 400 }
-//       );
-//     }
-
-//     // Perform findOneAndUpdate using $set to update only provided fields
-//     const user = await User.findOneAndUpdate(
-//       { clerkId }, // Query to find the user by clerkId
-//       { $set: updateFields }, // Updates the fields provided in the body
-//       { new: true } // Return the updated document
-//     );
-
-//     if (!user) {
-//       return NextResponse.json(
-//         { success: false, response: "User not found" },
-//         { status: 404 }
-//       );
-//     }
-
-//     return NextResponse.json({
-//       data: user,
-//       success: true,
-//       response: "User updated successfully",
-//       status: 200,
-//     });
-//   } catch (error: any) {
-//     return NextResponse.json(
-//       {
-//         error: error.message,
-//         success: false,
-//         response: "Failed to update user",
-//       },
-//       { status: 500 }
-//     );
-//   }
-// }

@@ -1,10 +1,10 @@
 import mongoose, { Document, Schema, Model } from "mongoose";
 
-interface IUser extends Document {
+export interface IUser extends Document {
   clerkId: string; // Simplified type definitions for better readability
   userType: string;
   userStatus?: "verified" | "unverified";
-  scheduledEventUrls?: Array<string>;
+  scheduledEventUrls?: string[];
   email: string;
   firstName?: string;
   lastName?: string;

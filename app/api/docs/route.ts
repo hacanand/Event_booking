@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
-import swaggerDocument from "@/swagger/swagger.json";
+import swaggerSpec from "@/lib/swaggerConfig";
 
-export const GET = async () => {
-  return NextResponse.json(swaggerDocument);
-};
-
- 
+export async function GET() {
+  return NextResponse.json(swaggerSpec);
+}
