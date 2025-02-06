@@ -1,22 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Calendar } from "lucide-react";
-
 import { motion } from "framer-motion";
-
 import { Steps } from "@/components/steps";
 import { getCalendlyAuthUrl } from "@/lib/calendly";
 import { useToast } from "@/hooks/use-toast";
 
-export default function ConnectCalendlyPage() {
+function CalendlyContent() {
   const router = useRouter();
   const { toast } = useToast();
-  // const [calendlyConnected, setCalendlyConnected] = useState(false);
-  const [loading, setLoading] = useState(false); // Loading state for button
+  const [loading, setLoading] = useState(false);
 
   const steps = [
     { id: 1, title: "Connect Calendly" },
@@ -27,9 +24,8 @@ export default function ConnectCalendlyPage() {
 
   const handleCalendlyConnection = async () => {
     try {
-      setLoading(true); // Start loading
+      setLoading(true);
       const authUrl = getCalendlyAuthUrl();
-      router.push(authUrl);
       if (!authUrl)
         throw new Error("Unable to get Calendly authorization URL.");
       toast({
@@ -37,7 +33,7 @@ export default function ConnectCalendlyPage() {
         description: "Please wait while we redirect you to Calendly.",
         variant: "default",
       });
-      router.push(authUrl); // Redirect to Calendly auth URL
+      router.push(authUrl);
     } catch (error) {
       console.error("Error connecting Calendly:", error);
       toast({
@@ -47,7 +43,7 @@ export default function ConnectCalendlyPage() {
         variant: "destructive",
       });
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false);
     }
   };
 
@@ -60,7 +56,6 @@ export default function ConnectCalendlyPage() {
     | null
     | undefined;
 
-  // Use effect to show toast if all required parameters are present
   useEffect(() => {
     if (title && description && variant) {
       toast({
@@ -85,35 +80,41 @@ export default function ConnectCalendlyPage() {
             exit={{ opacity: 0, y: -20 }}
             className="space-y-6"
           >
-            
-              <div className="space-y-4">
-                <h2 className="text-2xl font-bold text-[#14144B]">
-                  Connect Your Calendly
-                </h2>
-                <p className="text-gray-500">
-                  Connect your Calendly account to manage your appointments
-                </p>
-                <Button
-                  onClick={handleCalendlyConnection}
-                  className="w-full bg-[#00a3fa] hover:bg-[#00a3fa]/90 text-white"
-                  disabled={loading} // Disable button while loading
-                >
-                  {loading ? (
-                    <>
-                      <div className="loader mr-2"></div> Connecting...
-                    </>
-                  ) : (
-                    <>
-                      <Calendar className="mr-2 h-4 w-4" />
-                      Connect with Calendly
-                    </>
-                  )}
-                </Button>
-              </div>
-           
+            <div className="space-y-4">
+              <h2 className="text-2xl font-bold text-[#14144B]">
+                Connect Your Calendly
+              </h2>
+              <p className="text-gray-500">
+                Connect your Calendly account to manage your appointments
+              </p>
+              <Button
+                onClick={handleCalendlyConnection}
+                className="w-full bg-[#00a3fa] hover:bg-[#00a3fa]/90 text-white"
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <div className="loader mr-2"></div> Connecting...
+                  </>
+                ) : (
+                  <>
+                    <Calendar className="mr-2 h-4 w-4" />
+                    Connect with Calendly
+                  </>
+                )}
+              </Button>
+            </div>
           </motion.div>
         </Card>
       </div>
     </div>
+  );
+}
+
+export default function ConnectCalendlyPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CalendlyContent />
+    </Suspense>
   );
 }

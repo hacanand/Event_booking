@@ -1,9 +1,8 @@
-import { NextResponse } from "next/server";
-import { registerCalendlyWebhook } from "@/scripts/registerWebhook";
+ 
+// import { registerCalendlyWebhook } from "@/scripts/registerWebhook";
 import {
   exchangeCodeForToken,
   saveCalendlyUserAndUrlData,
- 
 } from "@/lib/calendly";
 import { currentUser } from "@clerk/nextjs/server";
 import { createRedirectResponse } from "@/lib/redirectHelper";
@@ -91,7 +90,7 @@ export async function GET(req: Request) {
     // Save token and user data
     try {
       await createToken(user.id, refresh_token);
-      const userCalendlyData = await saveCalendlyUserAndUrlData(
+      await saveCalendlyUserAndUrlData(
         user.id,
         access_token
       );
@@ -126,10 +125,13 @@ export async function GET(req: Request) {
     );
   } catch (error) {
     console.error("Unexpected error during Calendly OAuth callback:", error);
-    return createRedirectResponse("/salesperson/onboarding/connect-calendly", {
+    return createRedirectResponse("/salesperson/onboarding/connect-calendly",
+      
+      {
       title: "Unexpected Error",
       description: "An unexpected error occurred. Please try again later.",
       variant: "destructive",
-    });
+      }
+    );
   }
 }

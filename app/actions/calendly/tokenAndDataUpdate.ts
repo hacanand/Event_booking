@@ -2,7 +2,9 @@
 
 import axiosInstance from "@/app/utils/axiosInstance";
 import Token from "@/models/tokenModel";
+import { CalendlyEventResponse, CalendlyEventType, CalendlyUserResponse, TokenDocument, UpdateUserData } from "@/types/calendly";
 import axios, { AxiosInstance } from "axios";
+
 // Create a pre-configured Axios instance
 const calendlyApiClient: AxiosInstance = axios.create({
   baseURL: "https://api.calendly.com",
@@ -15,14 +17,14 @@ const calendlyApiClient: AxiosInstance = axios.create({
 export const saveCalendlyUserAndUrlData = async (
   userId: string,
   accessToken: string
-): Promise<any> => {
+): Promise<CalendlyUserResponse["resource"]> => {
   try {
     const userResponse = await fetchCalendlyUser(accessToken);
     const userUri = userResponse.resource.uri;
 
     const eventTypes = await getCalendlyEventTypes(userUri, accessToken);
     const scheduledEventUrls = eventTypes?.collection.map(
-      (event: { scheduling_url: string }) => event.scheduling_url
+      (event: CalendlyEventType) => event.scheduling_url
     );
 
     // Save the data to your server
@@ -36,16 +38,21 @@ export const saveCalendlyUserAndUrlData = async (
 };
 
 // Fetch Calendly user
-const fetchCalendlyUser = async (accessToken: string): Promise<any> => {
+const fetchCalendlyUser = async (
+  accessToken: string
+): Promise<CalendlyUserResponse> => {
   try {
-    const response = await calendlyApiClient.get("/users/me", {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
+    const response = await calendlyApiClient.get<CalendlyUserResponse>(
+      "/users/me",
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      }
+    );
     return response.data;
-  } catch (error: any) {
+  } catch (error) {
     console.error(
       "Error fetching Calendly user:",
-      error.response?.data || error.message
+      error  
     );
     throw new Error("Failed to fetch Calendly user.");
   }
@@ -55,33 +62,33 @@ const fetchCalendlyUser = async (accessToken: string): Promise<any> => {
 export const getCalendlyEventTypes = async (
   userUri: string,
   accessToken: string
-): Promise<any> => {
+): Promise<CalendlyEventResponse> => {
   try {
-    const response = await calendlyApiClient.get("/event_types", {
-      params: { user: userUri },
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
+    const response = await calendlyApiClient.get<CalendlyEventResponse>(
+      "/event_types",
+      {
+        params: { user: userUri },
+        headers: { Authorization: `Bearer ${accessToken}` },
+      }
+    );
     return response.data;
-  } catch (error: any) {
+  } catch (error ) {
     console.error(
       "Error fetching Calendly event types:",
-      error.response?.data || error.message
+      error 
     );
     throw new Error("Failed to fetch Calendly event types.");
   }
 };
 
 // Update user data on your server
-const updateUserData = async (
-  userId: string,
-  data: { scheduledEventUrls: string[] }
-) => {
+const updateUserData = async (userId: string, data: UpdateUserData) => {
   try {
     await axios.put(`/api/users/${userId}`, data); // Assuming axiosInstance is pre-configured
-  } catch (error: any) {
+  } catch (error ) {
     console.error(
       "Error updating user data on the server:",
-      error.response?.data || error.message
+      error 
     );
     throw new Error("Failed to update user data.");
   }
@@ -94,7 +101,7 @@ export async function getCalendlyToken({ clerkId }: { clerkId: string }) {
 
   try {
     // Find the token document by clerkId
-    const tokenDocument = await Token.findOne({ clerkId });
+    const tokenDocument = await Token.findOne<TokenDocument>({ clerkId });
 
     if (!tokenDocument) {
       throw new Error("Token document not found.");
@@ -115,7 +122,7 @@ export async function isCalendlyLoggedIn({ clerkId }: { clerkId: string }) {
 
   try {
     // Find the token document by clerkId
-    const tokenDocument = await Token.findOne({ clerkId });
+    const tokenDocument = await Token.findOne<TokenDocument>({ clerkId });
 
     if (!tokenDocument?.calendlyRefreshToken) {
       throw new Error("Token document not found.");
@@ -150,7 +157,9 @@ export async function fetchGoogleCalendarEventId(
       },
     };
 
-    const response = await axios.request(options);
+    const response = await axios.request<{
+      resource: { calendar_event: { external_id: string } };
+    }>(options);
     return response.data.resource.calendar_event.external_id || null;
   } catch (error) {
     console.error("Error fetching Google Calendar Event ID:", error);

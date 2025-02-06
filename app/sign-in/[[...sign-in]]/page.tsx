@@ -10,21 +10,26 @@ import { useUser } from "@clerk/nextjs";
 export default function LoginPage() {
   const [role, setRole] = useState<string>("customer"); // Default to "customer"
   const router = useRouter();
-  const { isSignedIn, isLoaded } = useUser();
-   const searchParams = useSearchParams();
-    const userId = searchParams.get('userId');
+  const { isSignedIn, isLoaded, user } = useUser();
+  const searchParams = useSearchParams();
+  const userId = searchParams.get("userId");
+
   // Update localStorage when role changes
   localStorage.setItem("role", role);
+
   useEffect(() => {
     if (isSignedIn && isLoaded) {
-      const storedRole = localStorage.getItem("role");
+      const storedRole = user.unsafeMetadata.role;
       if (storedRole === "salesperson") {
         router.push("/salesperson/onboarding");
       } else {
-        router.push("/customer-dashboard?userId="+userId);
+        const redirectUrl = userId
+          ? `/customer-dashboard?userId=${userId}`
+          : "/customer-dashboard";
+        router.push(redirectUrl);
       }
     }
-  }, [isSignedIn, isLoaded]);
+  }, [isSignedIn, isLoaded, user, router, userId]);
 
   return (
     <div className="min-h-screen bg-white flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -64,7 +69,11 @@ export default function LoginPage() {
                   key={1}
                   path="/sign-in"
                   routing="path"
-                  fallbackRedirectUrl={`/customer-dashboard?userId=${userId}`}
+                  fallbackRedirectUrl={
+                    userId
+                      ? `/customer-dashboard?userId=${userId}`
+                      : "/customer-dashboard"
+                  }
                   appearance={{
                     elements: {
                       formButtonPrimary:

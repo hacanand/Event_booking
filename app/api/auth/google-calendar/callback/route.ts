@@ -1,20 +1,24 @@
-import { NextResponse } from "next/server";
 import { getGoogleAuthClient } from "@/lib/google";
-import { isGoggleCalLoggedIn, updateGoogleCalendarToken } from "@/app/actions/google-calendar/tokenData";
+import {
+  isGoggleCalLoggedIn,
+  updateGoogleCalendarToken,
+} from "@/app/actions/google-calendar/tokenData";
 import { currentUser } from "@clerk/nextjs/server";
 import { createRedirectResponse } from "@/lib/redirectHelper";
- 
+
 import { Credentials } from "google-auth-library";
 
 // Handle token exchange
-async function exchangeAuthorizationCode(code: string) {
+async function exchangeAuthorizationCode(
+  code: string
+): Promise<Credentials | null> {
   const client = await getGoogleAuthClient();
   const response = await client.getToken(code);
   return response?.tokens || null;
 }
 
 // Update user tokens in the database
-async function updateUserTokens(tokens: Credentials) {
+async function updateUserTokens(tokens: Credentials): Promise<void> {
   const user = await currentUser();
   if (!user?.id) {
     throw new Error("Failed to fetch the current user.");
@@ -22,7 +26,7 @@ async function updateUserTokens(tokens: Credentials) {
   await updateGoogleCalendarToken(user.id, tokens);
 }
 
-export async function GET(req: Request) {
+export async function GET(req: Request): Promise<Response> {
   const url = new URL(req.url);
   const code = url.searchParams.get("code");
 
@@ -85,7 +89,7 @@ export async function GET(req: Request) {
       description: "You can now share your Calendly link with your customers.",
       variant: "default",
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error in Google Calendar callback:", error);
 
     // Redirect to /connect-google-calendar on any error

@@ -53,9 +53,9 @@ async function dbConnect(): Promise<mongoose.Connection> {
     // Await and cache the connection
     cached.conn = await cached.promise;
     return cached.conn;
-  } catch (error :any) {
-    console.error("Database connection failed:", error.message);
-    throw new Error(`Database connection error: ${error.message}`);
+  } catch (error ) {
+    console.error("Database connection failed:", error );
+    throw new Error(`Database connection error: ${error}`);
   }
 }
 

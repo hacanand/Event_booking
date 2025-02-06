@@ -62,9 +62,9 @@ export default function CheckConnectionPage() {
               <h2 className="text-2xl font-bold text-[#14144B]">
                 Check Calendly-Google Connection
               </h2>
-              <p className="text-gray-500">
-                Let's check if your Calendly is connected to Google Calendar
-              </p>
+                <p className="text-gray-500">
+                Let&apos;s check if your Calendly is connected to Google Calendar
+                </p>
               <Button
                 onClick={handleNextStep}
                 className="w-full bg-[#00FF8C] text-[#14144B] hover:bg-[#00FF8C]/90"

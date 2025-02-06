@@ -1,5 +1,6 @@
 'use server'
 import { google } from "googleapis";
+import { NextApiRequest } from "next";
 const SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"];
 
 export async function getGoogleAuthClient() {
@@ -19,7 +20,9 @@ export async function getGoogleAuthUrl() {
   });
 }
 
-export async function setCredentialsRefreshToken(req: any) {
+ 
+
+export async function setCredentialsRefreshToken(req: NextApiRequest) {
   const oauth2Client = getGoogleAuthClient();
   const refreshToken = await req.cookies["google-refresh-token"];
   (await oauth2Client).setCredentials({ refresh_token: refreshToken });

@@ -26,7 +26,9 @@ function Calendar({ className, selected, onSelect }: CalendarProps) {
 
   const handleDateClick = (day: number) => {
     const newDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day)
-    onSelect && onSelect(newDate)
+    if (onSelect) {
+      onSelect(newDate)
+    }
   }
 
   return (

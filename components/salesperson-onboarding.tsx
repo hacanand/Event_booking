@@ -113,7 +113,7 @@ export function SalespersonOnboarding() {
                     Check Calendly-Google Connection
                   </h2>
                   <p className="text-gray-500">
-                    Let's check if your Calendly is connected to Google Calendar
+                    Let&apos;s check if your Calendly is connected to Google Calendar
                   </p>
                   <Button
                     onClick={handleNextStep}

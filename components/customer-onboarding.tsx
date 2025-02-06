@@ -30,7 +30,7 @@ export function CustomerOnboarding() {
             className="space-y-6"
           >
             <h2 className="text-2xl font-bold text-[#14144B]">Welcome to hiipitch</h2>
-            <p className="text-gray-500">You're just one step away from scheduling a meeting with your salesperson.</p>
+            <p className="text-gray-500">You&apos;re just one step away from scheduling a meeting with your salesperson.</p>
             <Button 
               onClick={handleViewCalendar}
               disabled={loading}

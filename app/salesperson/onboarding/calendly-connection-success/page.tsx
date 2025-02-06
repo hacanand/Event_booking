@@ -4,25 +4,22 @@ import { motion } from "framer-motion";
 import { CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Card } from "@/components/ui/card";
 import { Steps } from "@/components/steps";
 
-export default function CalendlyConnectionSuccess() {
+function CalendlyConnectionSuccessContent() {
   const router = useRouter();
   const { toast } = useToast();
-  const [loading, setLoading] = useState(false); // Button loading state
+  const [loading, setLoading] = useState(false);
 
   function handleNext() {
-    setLoading(true); // Show loading state
-    setTimeout(() => {
-      router.push("/salesperson/onboarding/check-connection");
-      setLoading(false); // Reset loading after navigation
-    }, 1000); // Simulate loading delay
+    setLoading(true);
+    router.push("/salesperson/onboarding/check-connection");
+    setLoading(false);
   }
 
-  // Get response query parameters from URL
   const searchParams = useSearchParams();
   const title = searchParams.get("title");
   const description = searchParams.get("description");
@@ -80,7 +77,7 @@ export default function CalendlyConnectionSuccess() {
             <Button
               onClick={handleNext}
               className="w-full bg-[#00FF8C] text-[#14144B] hover:bg-[#00FF8C]/90"
-              disabled={loading} // Disable button when loading
+              disabled={loading}
             >
               {loading ? (
                 <>
@@ -94,5 +91,13 @@ export default function CalendlyConnectionSuccess() {
         </Card>
       </div>
     </div>
+  );
+}
+
+export default function CalendlyConnectionSuccess() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CalendlyConnectionSuccessContent />
+    </Suspense>
   );
 }

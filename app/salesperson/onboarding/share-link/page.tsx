@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 import { Steps } from "@/components/steps";
 import { CelebrationModal } from "@/components/celebration-modal";
 import { useUser } from "@clerk/nextjs";
-import axiosInstance from "@/app/utils/axiosInstance";
+// import axiosInstance from "@/app/utils/axiosInstance";
 
 export default function ShareLinkPage() {
   const router = useRouter();
@@ -24,7 +24,7 @@ export default function ShareLinkPage() {
     { id: 4, title: "Share Link" },
   ];
 
-  const shareableLink=`${process.env.NEXT_PUBLIC_BASE_URL}/sign-in?userId=${user?.id!} `
+  const shareableLink = user?.id ? `${process.env.NEXT_PUBLIC_BASE_URL}/sign-in?userId=${user.id}` : "";
   const handleShareLink = (link: string) => {
     if (shareableLink) {
       navigator.clipboard.writeText(link);

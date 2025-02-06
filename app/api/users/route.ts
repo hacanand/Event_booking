@@ -1,10 +1,10 @@
-import { NextApiRequest, NextApiResponse } from "next";
+// import {   NextApiResponse } from "next";
  
 import User from "../../../models/userModel";
 import dbConnect from "@/app/utils/dbConnect";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest, res: NextResponse) {
+export async function GET( ) {
   try {
     await dbConnect();
     const users = await User.find({});
@@ -14,16 +14,16 @@ export async function GET(req: NextRequest, res: NextResponse) {
       response: "All users fetched successfully",
       status: 200,
     });
-  } catch (error: any) {
+  } catch (error  ) {
     return NextResponse.json({
-      error: error.message,
+      error: error as Error,
       success: false,
       response: "Failed to fetch users",
       status: 500,
     });
   }
 }
-export async function POST(req: NextRequest, res: NextResponse) {
+export async function POST(req: NextRequest ) {
   try {
     await dbConnect();
     const body = await req.json();
@@ -67,9 +67,9 @@ export async function POST(req: NextRequest, res: NextResponse) {
       response: "User created successfully",
       status: 201,
     });
-  } catch (error: any) {
+  } catch (error ) {
     return NextResponse.json({
-      error: error.message,
+      error: error ,
       success: false,
       status: 500,
     });

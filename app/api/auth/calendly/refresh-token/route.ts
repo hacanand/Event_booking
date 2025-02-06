@@ -1,4 +1,4 @@
-  import { NextRequest, NextResponse } from "next/server";
+  import {   NextResponse } from "next/server";
   import mongoose from "mongoose";
   // Adjust the path to your token schema
   import axios from "axios";
@@ -6,7 +6,7 @@
 
   const CALENDLY_TOKEN_ENDPOINT = "https://auth.calendly.com/oauth/token";
 
-  export async function POST(req: NextRequest) {
+  export async function POST() {
     try {
       if (mongoose.connection.readyState === 0) {
         await mongoose.connect(process.env.MONGO_URI || "");
@@ -58,15 +58,19 @@
           expiresIn: expires_in,
         },
       });
-    } catch (error: any) {
-      console.error(
-        "Error updating Calendly token:",
-        error.response?.data || error.message
-      );
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error(
+          "Error updating Calendly token:",
+          error.response?.data || error.message
+        );
+      } else {
+        console.error("Error updating Calendly token:", error);
+      }
       return NextResponse.json(
         {
           message: "Failed to update Calendly token",
-          error: error.response?.data || error.message,
+          error: error
         },
         { status: 500 }
       );

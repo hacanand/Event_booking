@@ -20,10 +20,10 @@ export const getUberAccessToken = async () => {
     );
 
     return response.data.access_token;
-  } catch (error: any) {
+  } catch (error) {
     console.error(
       "Error getting Uber access token:",
-      error.response?.data || error
+     error
     );
     throw new Error("Unable to authenticate with Uber API");
   }
@@ -48,10 +48,10 @@ export const getOrganizationId = async (): Promise<string> => {
     console.log("Organization ID:", organizationId);
 
     return organizationId;
-  } catch (error: any) {
+  } catch (error) {
     console.error(
       "Error fetching organization ID:",
-      error.response?.data || error
+    error
     );
     throw new Error("Unable to fetch organization ID");
   }

@@ -34,7 +34,7 @@ export default function ConnectGoogleCalendarPage() {
       toast({
         title,
         description,
-        variant: variant as any,
+        variant: variant as "default" | "destructive",
       });
     }
   }, [router, toast]);
