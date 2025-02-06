@@ -8,6 +8,7 @@ export interface CalendlyEventType {
   scheduling_url: string;
 }
 
+
 export interface CalendlyEventResponse {
   collection: CalendlyEventType[];
 }
